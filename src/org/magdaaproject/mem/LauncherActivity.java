@@ -21,6 +21,7 @@ package org.magdaaproject.mem;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 
 /**
@@ -39,6 +40,10 @@ public class LauncherActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
+        
+        // start the service for debugging
+        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
+        startService(mIntent);
     }
 
     /*
@@ -49,5 +54,14 @@ public class LauncherActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_launcher, menu);
         return true;
+    }
+    
+    @Override
+    public void onDestroy() {
+    	super.onDestroy();
+    	
+    	// stop to the service for debugging
+        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
+        stopService(mIntent);
     }
 }
