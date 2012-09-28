@@ -19,10 +19,16 @@
  */
 package org.magdaaproject.mem.services;
 
+import org.magdaaproject.mem.provider.ReadingsContract;
 import org.magdaaproject.utils.SensorUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
+import org.magdaaproject.utils.readings.ReadingsList;
+import org.magdaaproject.utils.readings.TempHumidityReading;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.SQLException;
+import android.net.Uri;
 import android.os.IBinder;
 import android.util.Log;
 import ioio.lib.api.AnalogInput;
@@ -39,7 +45,7 @@ import ioio.lib.util.android.IOIOService;
 public class CoreService extends IOIOService {
 	
 	/*
-	 * private class level variables
+	 * private class level constants
 	 */
 	// logging variables
 	private static final boolean sVerboseLog = true;
@@ -53,12 +59,21 @@ public class CoreService extends IOIOService {
 	private static final int sSleepTime = 30000;
 	
 	/*
+	 * private class level variables
+	 */
+	private ReadingsList listOfReadings;
+	private long readingInterval = 5 * sSleepTime;
+	
+	/*
 	 * (non-Javadoc)
 	 * @see ioio.lib.util.android.IOIOService#onCreate()
 	 */
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		// initialise variables
+		listOfReadings = new ReadingsList();
 		
 		// output verbose debug log info
 		if(sVerboseLog) {
@@ -156,6 +171,11 @@ public class CoreService extends IOIOService {
 			
 			float mTemperature;
 			float mRelativeHumidity;
+			
+			TempHumidityReading mSensorReading;
+			
+			long mLastReadingTime = System.currentTimeMillis() + readingInterval;
+			
 			try {
 				
 				// get the temp and humidity voltages from the sensors
@@ -168,17 +188,82 @@ public class CoreService extends IOIOService {
 				// convert the humidity sensor voltage
 				mRelativeHumidity = SensorUtils.convertVoltageToRelativeHumidity(mHumidityVoltage, SensorUtils.HIH5031);
 				
-				// debug code
-				Log.v(sLogTag, "temperature voltage: '" + mTempVoltage + "'");
-				Log.v(sLogTag, "temperature celsius: '" + mTemperature + "'");
-				Log.v(sLogTag, "humidity voltage: '" + mHumidityVoltage + "'");
-				Log.v(sLogTag, "humidity value: '" + mRelativeHumidity + "'");
-				
 				// adjust the relative humidity value
 				mRelativeHumidity = SensorUtils.adjustRelativeHumidity(mRelativeHumidity, mTemperature, SensorUtils.HIH5031);
 				
-				Log.v(sLogTag, "adjusted humidity: '" + mRelativeHumidity + "'");
+				// add the readings to the list
+				mSensorReading = new TempHumidityReading(mTemperature, mRelativeHumidity);
+				listOfReadings.add(mSensorReading);
 				
+				// debug code
+				if(sVerboseLog) {
+					Log.v(sLogTag, "temperature voltage: '" + mTempVoltage + "'");
+					Log.v(sLogTag, "temperature celsius: '" + mTemperature + "'");
+					Log.v(sLogTag, "humidity voltage: '" + mHumidityVoltage + "'");
+					Log.v(sLogTag, "humidity value: '" + mRelativeHumidity + "'");
+					Log.v(sLogTag, "adjusted humidity: '" + mRelativeHumidity + "'");
+					Log.v(sLogTag, "sensor readings list size: '" + listOfReadings.size() + "'");
+					Log.v(sLogTag, "last reading time: '" + mLastReadingTime + "'");
+					Log.v(sLogTag, "current reading time: '" + System.currentTimeMillis() + "'");
+				}
+				
+				// determine if it is time to save a reading
+				if(mLastReadingTime >= (System.currentTimeMillis() - readingInterval)) {
+					
+					if(sVerboseLog) {
+						Log.v(sLogTag, "need to save a reading");
+					}
+					
+					// calculate the average temperature and humidity
+					float mAvgTemp = 0;
+					float mAvgHumidity = 0;
+					
+					// add up the readings
+					// TODO take into account the age of the readings?
+					for(int i = 0; i < listOfReadings.size(); i++) {
+						mSensorReading = (TempHumidityReading) listOfReadings.get(i);
+						
+						mAvgTemp += mSensorReading.getTemp();
+						mAvgHumidity += mSensorReading.getHumidity();
+					}
+					
+					// divide by the number of readings
+					mAvgTemp     = mAvgTemp / listOfReadings.size();
+					mAvgHumidity = mAvgHumidity / listOfReadings.size();
+					
+					if(sVerboseLog) {
+						Log.v(sLogTag, "average temperature: '" + mAvgTemp + "'");
+						Log.v(sLogTag, "average humidity: '" + mAvgHumidity + "'");
+					}
+					
+					// round to a single decimal point precision
+					mAvgTemp = Math.round(mAvgTemp * 10) / 10;
+					mAvgHumidity = Math.round(mAvgHumidity * 10) / 10;
+					
+					if(sVerboseLog) {
+						Log.v(sLogTag, "rounded average temperature: '" + mAvgTemp + "'");
+						Log.v(sLogTag, "rounded average humidity: '" + mAvgHumidity + "'");
+					}
+					
+					// write a new sensor reading entry
+					ContentValues mValues = new ContentValues();
+					
+					// populate the list of new values
+					mValues.put(ReadingsContract.Table.TIMESTAMP, System.currentTimeMillis());
+					mValues.put(ReadingsContract.Table.TEMPERATURE, mAvgTemp);
+					mValues.put(ReadingsContract.Table.HUMIDITY, mAvgHumidity);
+					
+					// add the values to the database
+					try {
+						Uri newRecord = getContentResolver().insert(ReadingsContract.CONTENT_URI, mValues);
+						
+						if(sVerboseLog) {
+							Log.v(sLogTag, String.format("new database entry %d: %f, %f", newRecord.getLastPathSegment(), mAvgTemp, mAvgHumidity));
+						}
+					} catch (SQLException e) {
+						Log.e(sLogTag, "unable to write new sensor reading to the database", e);
+					}
+				}
 				
 				// sleep for the desired amount of time
 				Thread.sleep(sSleepTime);
@@ -188,7 +273,6 @@ public class CoreService extends IOIOService {
 				ioio_.disconnect();
 			}
 		}
-		
 	}
 	
 	/*
