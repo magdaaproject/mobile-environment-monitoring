@@ -41,5 +41,9 @@
     <!-- permission group -->
     <string name="system_magdaa_permission_group_label">MaGDAA MEM Permissions</string>
     <string name="system_magdaa_permission_group_description">Permissions related to actions that can be undertaken with the MaGDAA MEM software</string>
+    
+    <!-- file system related strings -->
+    <string name="system_file_path_parent">/magdaaproject/</string>
+    <string name="system_file_Path_debug_output">/magdaaproject/debug/</string>
 
 </resources>

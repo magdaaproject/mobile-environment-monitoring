@@ -19,6 +19,9 @@
  */
 package org.magdaaproject.mem.services;
 
+import java.io.IOException;
+
+import org.magdaaproject.mem.R;
 import org.magdaaproject.mem.provider.ReadingsContract;
 import org.magdaaproject.utils.SensorUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
@@ -29,6 +32,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.SQLException;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import ioio.lib.api.AnalogInput;
@@ -243,6 +247,18 @@ public class CoreService extends IOIOService {
 					if(sVerboseLog) {
 						Log.v(sLogTag, "rounded average temperature: '" + mAvgTemp + "'");
 						Log.v(sLogTag, "rounded average humidity: '" + mAvgHumidity + "'");
+					}
+					
+					// add additional debug output if necessary
+					if(sVerboseLog) {
+						String mOutputPath = Environment.getExternalStorageDirectory().getPath();
+						mOutputPath += getString(R.string.system_file_Path_debug_output);
+						
+						try {
+							Log.v(sLogTag, "list debug file: " + listOfReadings.dumpData(mOutputPath));
+						} catch (IOException e) {
+							Log.v(sLogTag, "unable to write list debug file", e);
+						}
 					}
 					
 					// write a new sensor reading entry
