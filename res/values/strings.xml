@@ -25,5 +25,21 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_launcher">MaGDAA-MEM</string>
+    
+    <!-- content provider related strings -->
+    <string name="system_content_provider_label">MaGDAA MEM Sensor Readings</string>
+    <string name="system_content_provider_description">A datastore of all of the MaGDAA MEM Sensor Readings</string>
+    <string name="system_content_provider_authority">org.magdaaproject.mem.provider.items</string>
+    
+    <!-- content provider permissions -->
+    <string name="system_content_provider_permission_read_label">Read MaGDAA MEM Sensor Readings</string>
+    <string name="system_content_provider_permission_read_description">Read MaGDAA MEM Sensor Readings such as Temperature and Humidity</string>
+    
+    <string name="system_content_provider_permission_write_label">Write MaGDAA MEM Sensor Readings</string>
+    <string name="system_content_provider_permission_write_description">Write MaGDAA MEM Sensor Readings such as Temperature and Humidity</string>
+    
+    <!-- permission group -->
+    <string name="system_magdaa_permission_group_label">MaGDAA MEM Permissions</string>
+    <string name="system_magdaa_permission_group_description">Permissions related to actions that can be undertaken with the MaGDAA MEM software</string>
 
 </resources>
