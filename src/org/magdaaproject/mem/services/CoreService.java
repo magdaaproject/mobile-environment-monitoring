@@ -67,6 +67,7 @@ public class CoreService extends IOIOService {
 	 */
 	private ReadingsList listOfReadings;
 	private long readingInterval = 5 * sSleepTime;
+	private long nextReadingTime = System.currentTimeMillis() + readingInterval;
 	
 	/*
 	 * (non-Javadoc)
@@ -178,8 +179,6 @@ public class CoreService extends IOIOService {
 			
 			TempHumidityReading mSensorReading;
 			
-			long mLastReadingTime = System.currentTimeMillis() + readingInterval;
-			
 			try {
 				
 				// get the temp and humidity voltages from the sensors
@@ -207,12 +206,12 @@ public class CoreService extends IOIOService {
 					Log.v(sLogTag, "humidity value: '" + mRelativeHumidity + "'");
 					Log.v(sLogTag, "adjusted humidity: '" + mRelativeHumidity + "'");
 					Log.v(sLogTag, "sensor readings list size: '" + listOfReadings.size() + "'");
-					Log.v(sLogTag, "last reading time: '" + mLastReadingTime + "'");
+					Log.v(sLogTag, "next reading time: '" + nextReadingTime + "'");
 					Log.v(sLogTag, "current reading time: '" + System.currentTimeMillis() + "'");
 				}
 				
 				// determine if it is time to save a reading
-				if(mLastReadingTime >= (System.currentTimeMillis() - readingInterval)) {
+				if(nextReadingTime <= (System.currentTimeMillis() - readingInterval)) {
 					
 					if(sVerboseLog) {
 						Log.v(sLogTag, "need to save a reading");
@@ -274,11 +273,14 @@ public class CoreService extends IOIOService {
 						Uri newRecord = getContentResolver().insert(ReadingsContract.CONTENT_URI, mValues);
 						
 						if(sVerboseLog) {
-							Log.v(sLogTag, String.format("new database entry %d: %f, %f", newRecord.getLastPathSegment(), mAvgTemp, mAvgHumidity));
+							Log.v(sLogTag, String.format("new database entry %s: %s, %s", newRecord.getLastPathSegment(), mAvgTemp, mAvgHumidity));
 						}
 					} catch (SQLException e) {
 						Log.e(sLogTag, "unable to write new sensor reading to the database", e);
 					}
+					
+					// increment the reading interval
+					nextReadingTime = System.currentTimeMillis() + readingInterval;
 				}
 				
 				// sleep for the desired amount of time
