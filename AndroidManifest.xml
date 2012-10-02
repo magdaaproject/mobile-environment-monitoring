@@ -31,6 +31,7 @@
     <!-- uses permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     
     <!-- custom permissions -->
     <permission-group 
