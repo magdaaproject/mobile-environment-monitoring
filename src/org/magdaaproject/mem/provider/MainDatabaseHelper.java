@@ -50,7 +50,11 @@ public class MainDatabaseHelper extends SQLiteOpenHelper {
 			ReadingsContract.Table._ID + " INTEGER PRIMARY KEY, " +
 			ReadingsContract.Table.TIMESTAMP + " INTEGER, " + 
 			ReadingsContract.Table.TEMPERATURE + " REAL, " +
-			ReadingsContract.Table.HUMIDITY + " REAL)";
+			ReadingsContract.Table.HUMIDITY + " REAL, " +
+			ReadingsContract.Table.LATITUDE + " REAL, " +
+			ReadingsContract.Table.LONGITUDE + " REAL, " + 
+			ReadingsContract.Table.ALTITUDE + " REAL, " +
+			ReadingsContract.Table.GPS_ACCURACY + " REAL)";
 	
 	private static final String sReadingsIndexCreate = "CREATE INDEX readings_timestamp_index ON " +
 			ReadingsContract.Table.TABLE_NAME + "( " +

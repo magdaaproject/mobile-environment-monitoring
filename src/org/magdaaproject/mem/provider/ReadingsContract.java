@@ -89,8 +89,28 @@ public class ReadingsContract {
 		public static final String HUMIDITY = "humidity";
 		
 		/**
+		 * latitude GPS coordinate
+		 */
+		public static final String LATITUDE = "latitude";
+		
+		/**
+		 * longitude GPS coordinate
+		 */
+		public static final String LONGITUDE = "longitude";
+		
+		/**
+		 * altitude GPS coordinate
+		 */
+		public static final String ALTITUDE = "altitude";
+		
+		/**
+		 * GPS accuracy
+		 */
+		public static final String GPS_ACCURACY = "accuracy";
+		
+		/**
 		 * an array containing all of the columns
 		 */
-		public static final String[] COLUMNS = {_ID, TIMESTAMP,TEMPERATURE, HUMIDITY};
+		public static final String[] COLUMNS = {_ID, TIMESTAMP,TEMPERATURE, HUMIDITY, LATITUDE, LONGITUDE, ALTITUDE, GPS_ACCURACY};
 	}
 }
