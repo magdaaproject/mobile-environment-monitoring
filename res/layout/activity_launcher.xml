@@ -19,17 +19,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical">
+    
+    <!-- header -->
+     <TextView
+        android:id="@+id/launcher_ui_lbl_header"
+        style="@style/ui_elem_header"
+        android:text="@string/launcher_ui_lbl_header" />
 
+    <!-- about text -->
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_world"
-        tools:context=".LauncherActivity" />
+        android:id="@+id/launcher_ui_lbl_about"
+        style="@style/ui_elem_text_fill" />
+    
+    <!-- buttons -->
+    <LinearLayout
+        android:id="@+id/launcher_ui_layout_buttons"
+        style="@style/ui_elem_layout_default" >
 
-</RelativeLayout>
+     <Button
+         android:id="@+id/launcher_ui_btn_settings"
+         style="@style/ui_elem_button_default"
+         android:text="@string/launcher_ui_btn_settings" />
+     
+     <Button
+            android:id="@+id/launcher_ui_btn_start"
+            style="@style/ui_elem_button_default"
+            android:text="@string/launcher_ui_btn_start" />
+     
+     <Button
+            android:id="@+id/launcher_ui_btn_contact"
+            style="@style/ui_elem_button_default"
+            android:text="@string/launcher_ui_btn_contact" />
+
+    </LinearLayout>
+    
+    
+
+</LinearLayout>

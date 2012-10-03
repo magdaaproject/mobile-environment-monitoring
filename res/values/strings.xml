@@ -20,11 +20,25 @@
  */
 -->
 <resources>
-
-    <string name="app_name">MaGDAA MEM</string>
-    <string name="hello_world">Hello world!</string>
+    
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_launcher">MaGDAA-MEM</string>
+    
+    <!-- application wide strings -->
+    <string name="system_application_name">MaGDAA - MEM</string>
+    <string name="system_application_default_label">MaGDAA Project</string>
+    
+    <!-- launcher activity screen -->
+    <string name="launcher_ui_lbl_header">Mobile Environment Monitoring</string>
+    <string name="launcher_ui_lbl_about_start">This application is designed to interface with the MaGDAA sensor module to collect temperature and humidity readings. Before continuing ensure:\n\n</string>
+    <string name="launcher_ui_lbl_step_01">You have a MaGDAA sensor module\n</string>
+    <string name="launcher_ui_lbl_step_02">The sensor module is connected via a cable, or via bluetooth, to this device\n</string>
+    <string name="launcher_ui_lbl_step_03">If using bluetooth ensure the sensor module and device is paired\n</string>
+    <string name="launcher_ui_lbl_step_04">Use the \'settings\' button below to adjust any necessary settings\n</string>
+    <string name="launcher_ui_lbl_about_finish">\n Use the \'start\' below to start reading values from the sensor module and sharing them across the Serval Mesh network</string>
+    
+    <string name="launcher_ui_btn_settings">Settings</string>
+    <string name="launcher_ui_btn_start">Start</string>
+    <string name="launcher_ui_btn_contact">Contact</string>
     
     <!-- content provider related strings -->
     <string name="system_content_provider_label">MaGDAA MEM Sensor Readings</string>
@@ -45,5 +59,8 @@
     <!-- file system related strings -->
     <string name="system_file_path_parent">/magdaaproject/</string>
     <string name="system_file_Path_debug_output">/magdaaproject/debug/</string>
+    
+    <!-- ui element strings -->
+    <string name="ui_elem_bullet_span">15</string>
 
 </resources>

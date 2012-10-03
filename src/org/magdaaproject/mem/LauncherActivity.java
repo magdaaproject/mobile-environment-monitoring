@@ -21,8 +21,14 @@ package org.magdaaproject.mem;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
-import android.view.Menu;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.BulletSpan;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
 
 /**
  * 
@@ -30,7 +36,12 @@ import android.view.Menu;
  * to the user when the application starts
  *
  */
-public class LauncherActivity extends Activity {
+public class LauncherActivity extends Activity implements OnClickListener {
+	
+	/*
+	 * private class level constants
+	 */
+	private static final String sTag = "LauncherActivity";
 
 	/*
 	 * (non-Javadoc)
@@ -41,27 +52,65 @@ public class LauncherActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
         
+        // populate the activity with the required text
+        TextView mTextView = (TextView) findViewById(R.id.launcher_ui_lbl_about);
+        
+        CharSequence mStartText = getText(R.string.launcher_ui_lbl_about_start);
+        
+        // build the bullet steps
+        SpannableString mStep01 = new SpannableString(getString(R.string.launcher_ui_lbl_step_01));
+        mStep01.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep01.length(), 0);
+        
+        SpannableString mStep02 = new SpannableString(getString(R.string.launcher_ui_lbl_step_02));
+        mStep02.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep02.length(), 0);
+        
+        SpannableString mStep03 = new SpannableString(getString(R.string.launcher_ui_lbl_step_03));
+        mStep03.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep03.length(), 0);
+        
+        SpannableString mStep04 = new SpannableString(getString(R.string.launcher_ui_lbl_step_04));
+        mStep04.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep04.length(), 0);
+        
+        CharSequence mFinishText = getText(R.string.launcher_ui_lbl_about_finish);
+        
+        // finalise the string and display it
+        mTextView.setText(TextUtils.concat(mStartText, mStep01, mStep02, mStep03, mStep04, mFinishText));
+        
+        //setup the buttons
+        Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
+        mButton.setOnClickListener(this);
+        
+        mButton = (Button) findViewById(R.id.launcher_ui_btn_start);
+        mButton.setOnClickListener(this);
+        
+        mButton = (Button) findViewById(R.id.launcher_ui_btn_contact);
+        mButton.setOnClickListener(this);
+        
         // start the service for debugging
-        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
-        startService(mIntent);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_launcher, menu);
-        return true;
+//        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
+//        startService(mIntent);
     }
     
-    @Override
-    public void onDestroy() {
-    	super.onDestroy();
-    	
-    	// stop to the service for debugging
-        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
-        stopService(mIntent);
-    }
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
+	@Override
+	public void onClick(View view) {
+		
+		// determine which button was touched
+		switch(view.getId()){
+		case R.id.launcher_ui_btn_settings:
+			// show the settings activity
+			break;
+		case R.id.launcher_ui_btn_start:
+			// show the readings activity
+			break;
+		case R.id.launcher_ui_btn_contact:
+			// show the contact information stuff
+			break;
+		default:
+			Log.w(sTag, "an unknown view fired an onClick event");
+		}
+		
+	}
 }
