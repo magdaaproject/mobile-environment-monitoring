@@ -60,13 +60,13 @@ public class CoreService extends IOIOService {
 	private static final int sHumidityInputPin = 44;
 	
 	// sleep time between reading the input pins values
-	private static final int sSleepTime = 30000;
+	private static final int sSleepTime = 1000; // debug change, usually 30000
 	
 	/*
 	 * private class level variables
 	 */
 	private ReadingsList listOfReadings;
-	private long readingInterval = 5 * sSleepTime;
+	private long readingInterval = 10 * sSleepTime;
 	private long nextReadingTime = System.currentTimeMillis() + readingInterval;
 	
 	/*
