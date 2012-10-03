@@ -75,6 +75,13 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/system_application_default_label"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize" >
+        </activity>
+        
         <!-- services -->
         <service 
             android:exported="false" 

@@ -33,12 +33,48 @@
     <string name="launcher_ui_lbl_step_01">You have a MaGDAA sensor module\n</string>
     <string name="launcher_ui_lbl_step_02">The sensor module is connected via a cable, or via bluetooth, to this device\n</string>
     <string name="launcher_ui_lbl_step_03">If using bluetooth ensure the sensor module and device is paired\n</string>
-    <string name="launcher_ui_lbl_step_04">Use the \'settings\' button below to adjust any necessary settings\n</string>
-    <string name="launcher_ui_lbl_about_finish">\n Use the \'start\' below to start reading values from the sensor module and sharing them across the Serval Mesh network</string>
+    <string name="launcher_ui_lbl_step_04">Use the \'Preferences\' button below to adjust any necessary settings\n</string>
+    <string name="launcher_ui_lbl_about_finish">\n Use the \'Start\' below to start reading values from the sensor module and sharing them across the Serval Mesh network</string>
     
-    <string name="launcher_ui_btn_settings">Settings</string>
+    <string name="launcher_ui_btn_settings">Preferences</string>
     <string name="launcher_ui_btn_start">Start</string>
     <string name="launcher_ui_btn_contact">Contact</string>
+    
+    <!-- preferences related strings -->
+    <string name="preferences_display_title">Display Preferences</string>
+    <string name="preferences_sensor_readings_title">Sensor Reading Preferences</string>
+    
+    <string name="preferences_display_temperature_title">Temperature Units</string>
+    <string name="preferences_display_temperature_description">The units used to display the temperature.</string>
+    <string name="preferences_display_temperature_default">c</string>
+    
+    <string name="preferences_display_max_cold_temp_title">Maxmimum Cold Temp</string>
+    <string name="preferences_display_max_cold_temp_description">The maximum temperature, in ºC, that is considered to be cold</string>
+    <string name="preferences_display_max_cold_temp_dialog">The maximum cold temperature in ºC</string>
+    <string name="preferences_display_max_cold_temp_default">20</string>
+    
+    <string name="preferences_display_min_hot_temp_title">Minimum Hot Temp</string>
+    <string name="preferences_display_min_hot_temp_description">The minimum temperature, in ºC, that is considered to be hot</string>
+    <string name="preferences_display_min_hot_temp_dialog">The minimum hot temperature in ºC</string>
+    <string name="preferences_display_min_hot_temp_default">30</string>
+    
+    <string name="preferences_collection_interval_title">Collection Interval</string>
+    <string name="preferences_collection_interval_description">The interval between collecting a sensor reading</string>
+    <string name="preferences_collection_interval_default">60000</string>
+    
+    <string name="preferences_collection_location_title">Collect Geographic Location</string>
+    <string name="preferences_collection_location_description">Collect geographic location information with a sensor reading</string>
+    
+    <string name="preferences_collection_location_type_title">Source of Location Information</string>
+    <string name="preferences_collection_location_type_description">The source of geographic location information to use</string>
+    <string name="preferences_collection_location_type_dialog">The source of geographic information</string>
+    <string name="preferences_collection_location_type_default">gps</string>
+    
+    <string name="preferences_collection_location_manual">Manual Location Entry</string>
+    
+    <string name="preferences_collection_location_manual_lat_title">Latitude Coordinate</string>
+    <string name="preferences_collection_location_manual_lat_description">The latitude coordinate to use for location information</string>
+    <string name="preferences_collection_location_manual_lat_dialog">The latitude coordinate in decimal degrees</string>
     
     <!-- content provider related strings -->
     <string name="system_content_provider_label">MaGDAA MEM Sensor Readings</string>

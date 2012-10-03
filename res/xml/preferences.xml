@@ -1,0 +1,87 @@
+<!-- 
+/*
+ * Copyright (C) 2012 The MaGDAA Project
+ *
+ * This file is part of the MaGDAA MEM Software
+ *
+ * MaGDAA MEM Software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This source code is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this source code; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!-- display preferences -->
+	<PreferenceCategory 
+	    android:title="@string/preferences_display_title"
+		android:key="preferences_key_display_settings">
+
+		<ListPreference 
+		    android:key="preferences_display_temperature"
+			android:title="@string/preferences_display_temperature_title" 
+			android:summary="@string/preferences_display_temperature_description"
+			android:dialogTitle="@string/preferences_display_temperature_description"
+			android:entries="@array/preferences_display_temperature_entries"
+			android:entryValues="@array/preferences_display_temperature_values"
+			android:defaultValue="@string/preferences_display_temperature_default" />
+		
+		<EditTextPreference 
+		    android:key="preferences_display_max_cold_temp"
+		    android:title="@string/preferences_display_max_cold_temp_title"
+		    android:summary="@string/preferences_display_max_cold_temp_description"
+		    android:dialogTitle="@string/preferences_display_max_cold_temp_dialog"
+		    android:defaultValue="@string/preferences_display_max_cold_temp_default" />
+		
+		<EditTextPreference 
+		    android:key="preferences_display_min_hot_temp"
+		    android:title="@string/preferences_display_min_hot_temp_title"
+		    android:summary="@string/preferences_display_min_hot_temp_description"
+		    android:dialogTitle="@string/preferences_display_min_hot_temp_dialog"
+		    android:defaultValue="@string/preferences_display_min_hot_temp_default" />
+
+	</PreferenceCategory>
+	
+	<!-- collection preferences -->
+	<PreferenceCategory 
+	    android:title="@string/preferences_sensor_readings_title"
+		android:key="preferences_key_sensor_readings_settings">
+		
+	    <ListPreference 
+		    android:key="preferences_collection_interval"
+			android:title="@string/preferences_collection_interval_title" 
+			android:summary="@string/preferences_collection_interval_description"
+			android:dialogTitle="@string/preferences_collection_interval_description"
+			android:entries="@array/preferences_collection_interval_entries"
+			android:entryValues="@array/preferences_collection_interval_values"
+			android:defaultValue="@string/preferences_collection_interval_default" />
+	    
+	    <CheckBoxPreference
+	        android:key="preferences_collection_location"
+	        android:title="@string/preferences_collection_location_title"
+	        android:summary="@string/preferences_collection_location_description"
+	        android:defaultValue="true" />
+	    
+	    <ListPreference
+	        android:dependency="preferences_collection_location" 
+		    android:key="preferences_collection_location_type"
+			android:title="@string/preferences_collection_location_type_title" 
+			android:summary="@string/preferences_collection_location_type_description"
+			android:dialogTitle="@string/preferences_collection_location_type_dialog"
+			android:entries="@array/preferences_collection_location_type_entries"
+			android:entryValues="@array/preferences_collection_location_type_values"
+			android:defaultValue="@string/preferences_collection_location_type_default" />
+		
+	</PreferenceCategory>
+
+
+</PreferenceScreen>

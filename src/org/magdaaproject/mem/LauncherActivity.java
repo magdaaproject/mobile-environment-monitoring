@@ -21,6 +21,7 @@ package org.magdaaproject.mem;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.BulletSpan;
@@ -97,10 +98,13 @@ public class LauncherActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View view) {
 		
+		Intent mIntent;
+		
 		// determine which button was touched
 		switch(view.getId()){
 		case R.id.launcher_ui_btn_settings:
-			// show the settings activity
+			mIntent = new Intent(this, org.magdaaproject.mem.SettingsActivity.class);
+			startActivity(mIntent);
 			break;
 		case R.id.launcher_ui_btn_start:
 			// show the readings activity
