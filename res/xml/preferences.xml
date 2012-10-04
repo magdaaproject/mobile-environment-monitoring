@@ -41,7 +41,7 @@
 		    android:summary="@string/preferences_display_max_cold_temp_description"
 		    android:dialogTitle="@string/preferences_display_max_cold_temp_dialog"
 		    android:defaultValue="@string/preferences_display_max_cold_temp_default"
-		     android:inputType="number" />
+		    android:inputType="number" />
 		
 		<EditTextPreference 
 		    android:key="preferences_display_min_hot_temp"

@@ -34,11 +34,21 @@
     <string name="launcher_ui_lbl_step_02">The sensor module is connected via a cable, or via bluetooth, to this device\n</string>
     <string name="launcher_ui_lbl_step_03">If using bluetooth ensure the sensor module and device is paired\n</string>
     <string name="launcher_ui_lbl_step_04">Use the \'Preferences\' button below to adjust any necessary settings\n</string>
-    <string name="launcher_ui_lbl_about_finish">\n Use the \'Start\' below to start reading values from the sensor module and sharing them across the Serval Mesh network</string>
+    <string name="launcher_ui_lbl_about_finish">\nUse the \'Start\' below to start reading values from the sensor module and sharing them across the Serval Mesh network</string>
     
     <string name="launcher_ui_btn_settings">Preferences</string>
     <string name="launcher_ui_btn_start">Start</string>
     <string name="launcher_ui_btn_contact">Contact</string>
+    
+    <!-- readings activity screen -->
+    <string name="readings_ui_lbl_header">Sensor Readings</string>
+    
+    <string name="readings_ui_lbl_sensor_status">Sensor Status: </string>
+    <string name="readings_ui_lbl_sensor_status_connected">Connected</string>
+    <string name="readings_ui_lbl_sensor_status_disconnected">Disconnected</string>
+    
+    <string name="readings_ui_lbl_temperature">Temperature</string>
+    <string name="readings_ui_lbl_temperature_img">A Thermometer</string>
     
     <!-- preferences related strings -->
     <string name="preferences_display_title">Display Preferences</string>
