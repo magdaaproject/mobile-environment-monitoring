@@ -65,16 +65,23 @@
     <string name="preferences_collection_location_title">Collect Geographic Location</string>
     <string name="preferences_collection_location_description">Collect geographic location information with a sensor reading</string>
     
-    <string name="preferences_collection_location_type_title">Source of Location Information</string>
-    <string name="preferences_collection_location_type_description">The source of geographic location information to use</string>
-    <string name="preferences_collection_location_type_dialog">The source of geographic information</string>
-    <string name="preferences_collection_location_type_default">gps</string>
+    <string name="preferences_collection_location_gps_title">Use GPS Location</string>
+    <string name="preferences_collection_location_gps_description">Use geographic location information from GPS</string>
     
-    <string name="preferences_collection_location_manual">Manual Location Entry</string>
+    <string name="preferences_collection_location_manual_title">Use Manual Location</string>
+    <string name="preferences_collection_location_manual_description">Use manually entered geographic location information</string>
     
-    <string name="preferences_collection_location_manual_lat_title">Latitude Coordinate</string>
-    <string name="preferences_collection_location_manual_lat_description">The latitude coordinate to use for location information</string>
-    <string name="preferences_collection_location_manual_lat_dialog">The latitude coordinate in decimal degrees</string>
+    <string name="preferences_collection_location_manual_lat_title">Manual Latitude Geocoordinate</string>
+    <string name="preferences_collection_location_manual_lat_description">A Latitude Geocoordinate in decimal degrees</string>
+    <string name="preferences_collection_location_manual_lat_dialog">Latitude coordinate in decimal degrees</string>
+    
+    <string name="preferences_collection_location_manual_lng_title">Manual Longitude Geocoordinate</string>
+    <string name="preferences_collection_location_manual_lng_description">A Longitude Geocoordinate in decimal degrees</string>
+    <string name="preferences_collection_location_manual_lng_dialog">Longitude coordinate in decimal degrees</string>
+    
+    <string name="preferences_collection_location_manual_invalid">The geocoordinate was invalid and has not been saved</string>
+    
+    <string name="preferences_dialog_invalid_manual_location_coords">The manual Geocoordinates are invalid, please adjust the values before continuing</string>
     
     <!-- content provider related strings -->
     <string name="system_content_provider_label">MaGDAA MEM Sensor Readings</string>

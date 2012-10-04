@@ -40,14 +40,16 @@
 		    android:title="@string/preferences_display_max_cold_temp_title"
 		    android:summary="@string/preferences_display_max_cold_temp_description"
 		    android:dialogTitle="@string/preferences_display_max_cold_temp_dialog"
-		    android:defaultValue="@string/preferences_display_max_cold_temp_default" />
+		    android:defaultValue="@string/preferences_display_max_cold_temp_default"
+		     android:inputType="number" />
 		
 		<EditTextPreference 
 		    android:key="preferences_display_min_hot_temp"
 		    android:title="@string/preferences_display_min_hot_temp_title"
 		    android:summary="@string/preferences_display_min_hot_temp_description"
 		    android:dialogTitle="@string/preferences_display_min_hot_temp_dialog"
-		    android:defaultValue="@string/preferences_display_min_hot_temp_default" />
+		    android:defaultValue="@string/preferences_display_min_hot_temp_default"
+		     android:inputType="number" />
 
 	</PreferenceCategory>
 	
@@ -71,15 +73,35 @@
 	        android:summary="@string/preferences_collection_location_description"
 	        android:defaultValue="true" />
 	    
-	    <ListPreference
-	        android:dependency="preferences_collection_location" 
-		    android:key="preferences_collection_location_type"
-			android:title="@string/preferences_collection_location_type_title" 
-			android:summary="@string/preferences_collection_location_type_description"
-			android:dialogTitle="@string/preferences_collection_location_type_dialog"
-			android:entries="@array/preferences_collection_location_type_entries"
-			android:entryValues="@array/preferences_collection_location_type_values"
-			android:defaultValue="@string/preferences_collection_location_type_default" />
+	    <CheckBoxPreference
+	        android:dependency="preferences_collection_location"
+	        android:key="preferences_collection_location_gps"
+	        android:title="@string/preferences_collection_location_gps_title"
+	        android:summary="@string/preferences_collection_location_gps_description"
+	        android:defaultValue="true" />
+	    
+	    <CheckBoxPreference
+	        android:dependency="preferences_collection_location"
+	        android:key="preferences_collection_location_manual"
+	        android:title="@string/preferences_collection_location_manual_title"
+	        android:summary="@string/preferences_collection_location_manual_description"
+	        android:defaultValue="false" />
+	    
+	    <EditTextPreference 
+	        android:dependency="preferences_collection_location_manual"
+		    android:key="preferences_collection_location_manual_lat"
+		    android:title="@string/preferences_collection_location_manual_lat_title"
+		    android:summary="@string/preferences_collection_location_manual_lat_description"
+		    android:dialogTitle="@string/preferences_collection_location_manual_lat_dialog"
+		    android:inputType="numberDecimal|number|numberSigned" />
+	    
+	    <EditTextPreference 
+	        android:dependency="preferences_collection_location_manual"
+		    android:key="preferences_collection_location_manual_lng"
+		    android:title="@string/preferences_collection_location_manual_lng_title"
+		    android:summary="@string/preferences_collection_location_manual_lng_description"
+		    android:dialogTitle="@string/preferences_collection_location_manual_lng_dialog"
+		    android:inputType="numberDecimal|number|numberSigned" />
 		
 	</PreferenceCategory>
 
