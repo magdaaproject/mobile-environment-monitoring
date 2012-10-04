@@ -19,9 +19,9 @@
  */
 package org.magdaaproject.mem;
 
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.BulletSpan;
@@ -111,10 +111,25 @@ public class LauncherActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.launcher_ui_btn_contact:
 			// show the contact information stuff
+			contactUs();
 			break;
 		default:
 			Log.w(sTag, "an unknown view fired an onClick event");
 		}
 		
+	}
+	
+	/*
+	 * method to start the send an email process so that the user can contact us
+	 */
+	private void contactUs() {
+		
+		// send an email to us
+		Intent mIntent = new Intent(Intent.ACTION_SEND);
+		mIntent.setType("plain/text");
+		mIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{getString(R.string.system_contact_email)});
+		mIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.system_contact_email_subject));
+		
+		startActivity(Intent.createChooser(mIntent, getString(R.string.system_contact_email_chooser)));
 	}
 }

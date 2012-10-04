@@ -105,5 +105,11 @@
     
     <!-- ui element strings -->
     <string name="ui_elem_bullet_span">15</string>
+    
+    <!-- system contact strings -->
+    <string name="system_contact_email">admin@magdaaproject.org</string>
+    <string name="system_contact_email_subject">Feedback on the MaGDAA MEM application</string>
+    <string name="system_contact_email_chooser">Send feedback email&#8230;</string>
+    <string name="system_contact_email_no_app">A default email client could not be found, please send any feedback you may have to %1$s</string>
 
 </resources>
