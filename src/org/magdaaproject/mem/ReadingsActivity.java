@@ -23,12 +23,17 @@ import org.magdaaproject.utils.TimeUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -48,6 +53,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 * private class level constants
 	 */
 	//private static final String sTag = "ReadingsActivity";
+	private static final int sGpsNotEnabledDialog = 0;
 	
 	/*
 	 * private class level variables
@@ -85,6 +91,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +135,20 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         // get the temperature format preference
         temperatureFormat = mPreferences.getString("preferences_display_temperature", "c");
         
+        // ensure GPS is enabled if necessary
+        if(mPreferences.getBoolean("preferences_collection_location", true)) {
+        	if(mPreferences.getBoolean("preferences_collection_location_gps", true)) {
+        		// check to ensure GPS is enabled
+        		LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    			
+    			boolean mEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    			
+    			if(mEnabled == false) {
+    				showDialog(sGpsNotEnabledDialog);
+    			}
+        	}
+        }
+        
         mPreferences = null;
         
         // populate the views with test data
@@ -170,6 +191,39 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		}
 		
 		super.onDestroy();
+	}
+	
+	/*
+	 * callback method used to construct the required dialog
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreateDialog(int)
+	 */
+	@SuppressWarnings("deprecation")
+	@Override
+	protected Dialog onCreateDialog(int id) {
+
+		AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+		
+		// determine which dialog to show
+		switch(id) {
+		case sGpsNotEnabledDialog:
+			mBuilder.setMessage(R.string.preferences_dialog_invalid_gps_status)
+			.setCancelable(false)
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					Intent mIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					startActivity(mIntent);
+				}
+			})
+			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			return mBuilder.create();
+		default:
+			return super.onCreateDialog(id);
+		}
 	}
 	
 	/**
