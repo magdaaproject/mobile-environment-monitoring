@@ -20,6 +20,7 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.utils.TimeUtils;
+import org.magdaaproject.utils.UnitConversionUtils;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -69,7 +70,12 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private int maxColdTemp;
 	private int minHotTemp;
 	
+	private String celsiusFormat;
+	private String fahrenheitFormat;
+	private String kelvinFormat;
 	private String readingTimeFormat;
+	
+	private String temperatureFormat;
 
 	/*
 	 * (non-Javadoc)
@@ -89,6 +95,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         readingTimeView = (TextView) findViewById(R.id.readings_ui_lbl_reading_time);
         
         // get formating strings
+        celsiusFormat = getString(R.string.readings_ui_lbl_temperature_value_celsius);
+        fahrenheitFormat = getString(R.string.readings_ui_lbl_temperature_value_fahrenheit);
+        kelvinFormat = getString(R.string.readings_ui_lbl_temperature_value_kelvin);
         readingTimeFormat = getString(R.string.readings_ui_lbl_reading_time);
         
         // get the cold and hot temperature preferences
@@ -110,12 +119,15 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         	minHotTemp = Integer.parseInt(getString(R.string.preferences_display_max_cold_temp_default));
         }
         
+        // get the temperature format preference
+        temperatureFormat = mPreferences.getString("preferences_display_temperature", "c");
+        
         mPreferences = null;
         
         // populate the views with test data
         updateSensorStatus(true);
         
-        temperatureValueView.setText("21¼C");
+        updateTemperatureValue(21.2f);
         
         updateTemperatureImage(34);
         
@@ -166,6 +178,28 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		
 		// combine the two parts and set the text of the view
 		sensorStatusView.setText(TextUtils.concat(mStartText, " ", mConnectedValue));
+	}
+	
+	
+	/**
+	 * a private method to update the temperature value label
+	 * @param temperature
+	 */
+	private void updateTemperatureValue(float temperature) {
+		
+		String mValue = null;
+		
+		if(temperatureFormat.equals("c")) {
+			mValue = String.format(celsiusFormat, temperature);
+		} else if(temperatureFormat.equals("f")) {
+			mValue = String.format(fahrenheitFormat, 
+					UnitConversionUtils.comvertTemperature(temperature, UnitConversionUtils.CELSIUS, UnitConversionUtils.FAHRENHEIT));
+		} else {
+			mValue = String.format(kelvinFormat, 
+					UnitConversionUtils.comvertTemperature(temperature, UnitConversionUtils.CELSIUS, UnitConversionUtils.KELVIN));
+		}
+		
+        temperatureValueView.setText(mValue);
 	}
 	
 	/**
