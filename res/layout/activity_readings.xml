@@ -79,5 +79,10 @@
             android:contentDescription="@string/readings_ui_lbl_humidity_img" />
         
     </LinearLayout>
+    
+    <!-- start reading time -->
+    <TextView
+       android:id="@+id/readings_ui_lbl_reading_time"
+       style="@style/ui_elem_sub_header_2" />
 
 </LinearLayout>

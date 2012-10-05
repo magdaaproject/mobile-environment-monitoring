@@ -19,6 +19,8 @@
  */
 package org.magdaaproject.mem;
 
+import org.magdaaproject.utils.TimeUtils;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -53,6 +55,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private ImageView temperatureImgView;
 	private TextView humidityValueView;
 	private ImageView humidityImgView;
+	private TextView readingTimeView;
 	
 	private Drawable coldTempDrawable = null;
 	private Drawable warmTempDrawable = null;
@@ -65,6 +68,8 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	
 	private int maxColdTemp;
 	private int minHotTemp;
+	
+	private String readingTimeFormat;
 
 	/*
 	 * (non-Javadoc)
@@ -75,12 +80,16 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_readings);
         
-        // find all of the necessary text
+        // find all of the necessary views
         sensorStatusView = (TextView) findViewById(R.id.readings_ui_lbl_sensor_status);
         temperatureValueView = (TextView) findViewById(R.id.readings_ui_lbl_temperature_value);
         temperatureImgView = (ImageView) findViewById(R.id.readings_ui_lbl_temperature_img);
         humidityValueView = (TextView) findViewById(R.id.readings_ui_lbl_humidity_value);
         humidityImgView = (ImageView) findViewById(R.id.readings_ui_lbl_humidity_img);
+        readingTimeView = (TextView) findViewById(R.id.readings_ui_lbl_reading_time);
+        
+        // get formating strings
+        readingTimeFormat = getString(R.string.readings_ui_lbl_reading_time);
         
         // get the cold and hot temperature preferences
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -113,6 +122,10 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         humidityValueView.setText("47%");
         
         updateHumidityImage(47);
+        
+        readingTimeView.setText(String.format(readingTimeFormat, TimeUtils.formatTime(System.currentTimeMillis())));
+        
+        
         // TODO populate with live data
         
     }
