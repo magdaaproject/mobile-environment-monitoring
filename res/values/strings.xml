@@ -103,6 +103,7 @@
     <string name="preferences_collection_location_manual_invalid">The geocoordinate was invalid and has not been saved</string>
     
     <string name="preferences_dialog_invalid_manual_location_coords">The manual Geocoordinates are invalid, please adjust the values before continuing</string>
+    <string name="preferences_dialog_invalid_gps_status">GPS Location Services must be enabled to use GPS locations. Enable GPS Location Services now?</string>
     
     <!-- notification related strings -->
     <string name="system_notification_ticker_text">MaGDAA MEM recording has started</string>

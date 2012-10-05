@@ -33,6 +33,7 @@
     <uses-permission android:name="android.permission.INTERNET"/> <!-- access IOIO -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> <!-- write files on external storage -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/> <!-- derive the device id -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- geocode sensor readings -->
     
     <!-- custom permissions -->
     <permission-group 

@@ -24,13 +24,16 @@ import org.magdaaproject.utils.GeoCoordUtils;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,6 +47,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	/*
 	 * private class level constants
 	 */
+	private static final boolean sVerboseLog = true;
 	private static final String sTag = "SettingsActivity";
 	
 	private static final String sLocationInfoGps = "preferences_collection_location_gps";
@@ -53,6 +57,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	private static final String sManualLongitude = "preferences_collection_location_manual_lng";
 	
 	private static final int sMissingCoordsDialog = 0;
+	private static final int sGpsNotEnabledDialog = 1;
 	
 	/*
 	 * (non-Javadoc)
@@ -79,8 +84,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		
 		// TODO use this to update the summary of the list items
 		
-		//debug code
-		Log.v(sTag, "preference key: '" + key + "'");
+		// output verbose debug log info
+		if(sVerboseLog) {
+			Log.v(sTag, "preference key: '" + key + "'");
+		}
 		
 		/*
 		 *  ensure the appropriate coordinate checkbox is ticked
@@ -95,7 +102,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			mEditor.apply();
 			
 			CheckBoxPreference mPreference = (CheckBoxPreference) findPreference(sLocationInfoManual);
-			mPreference.setChecked(!mValue);	
+			mPreference.setChecked(!mValue);
+			
 		}
 		
 		if(key.equals(sLocationInfoManual)) {
@@ -166,15 +174,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	@SuppressWarnings("deprecation")
 	public void onBackPressed(){
-		/*
-		 * ensure that if manual location is enabled that coordinates have been specified
-		 */
 		
+		// validate some settings
 		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		
-		boolean isManualLocation = mPreferences.getBoolean(sLocationInfoManual, false);
-		
-		if(isManualLocation) {
+		// validate the manual location information if required
+		if(mPreferences.getBoolean(sLocationInfoManual, false)) {
 			// manual location is enabled
 			
 			String mLatitude = mPreferences.getString(sManualLatitude, null);
@@ -187,7 +192,31 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				// finish as normal
 				finish();
 			}
+		} else if(mPreferences.getBoolean(sLocationInfoGps, false)) {
+			// gps location information is enabled
+			
+			// output verbose debug log info
+			if(sVerboseLog) {
+				Log.v(sTag, "gps location information is enabled");
+			}
+			
+			LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+			
+			boolean mEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			
+			if(mEnabled == false) {
+				
+				if(sVerboseLog) {
+					Log.v(sTag, "gps location service is not enabled");
+				}
+				
+				showDialog(sGpsNotEnabledDialog);
+			} else {
+				// finish as normal
+				finish();
+			}
 		} else {
+			
 			// finish as normal
 			finish();
 		}
@@ -210,6 +239,21 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			mBuilder.setMessage(R.string.preferences_dialog_invalid_manual_location_coords)
 			.setCancelable(false)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			return mBuilder.create();
+		case sGpsNotEnabledDialog:
+			mBuilder.setMessage(R.string.preferences_dialog_invalid_gps_status)
+			.setCancelable(false)
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					Intent mIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					startActivity(mIntent);
+				}
+			})
+			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
 				}
