@@ -51,10 +51,17 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private TextView sensorStatusView;
 	private TextView temperatureValueView;
 	private ImageView temperatureImgView;
+	private TextView humidityValueView;
+	private ImageView humidityImgView;
 	
 	private Drawable coldTempDrawable = null;
 	private Drawable warmTempDrawable = null;
 	private Drawable hotTempDrawable = null;
+	
+	private Drawable humidity25Drawable = null;
+	private Drawable humidity50Drawable = null;
+	private Drawable humidity75Drawable = null;
+	private Drawable humidity100Drawable = null;
 	
 	private int maxColdTemp;
 	private int minHotTemp;
@@ -72,6 +79,8 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         sensorStatusView = (TextView) findViewById(R.id.readings_ui_lbl_sensor_status);
         temperatureValueView = (TextView) findViewById(R.id.readings_ui_lbl_temperature_value);
         temperatureImgView = (ImageView) findViewById(R.id.readings_ui_lbl_temperature_img);
+        humidityValueView = (TextView) findViewById(R.id.readings_ui_lbl_humidity_value);
+        humidityImgView = (ImageView) findViewById(R.id.readings_ui_lbl_humidity_img);
         
         // get the cold and hot temperature preferences
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -100,6 +109,10 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         temperatureValueView.setText("21¼C");
         
         updateTemperatureImage(34);
+        
+        humidityValueView.setText("47%");
+        
+        updateHumidityImage(47);
         // TODO populate with live data
         
     }
@@ -144,9 +157,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	
 	/**
 	 * update the temperature image based on the recorded temperature
-	 * @param temperature the temperature to the nearest degree
+	 * @param temperature the recorded temperature
 	 */
-	private void updateTemperatureImage(int temperature) {
+	private void updateTemperatureImage(float temperature) {
 		
 		//determine which drawable to use
 		if(temperature < maxColdTemp) {
@@ -164,6 +177,36 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 				warmTempDrawable = getResources().getDrawable(R.drawable.temperature_warm);
 			}
 			temperatureImgView.setImageDrawable(warmTempDrawable);
+		}
+	}
+	
+	/**
+	 * update the humidity image based on the recorded humidity
+	 * @param humidity the recorded humidity
+	 */
+	private void updateHumidityImage(float humidity) {
+		
+		// determine which drawable to use
+		if(humidity < 25) {
+			if(humidity25Drawable == null) {
+				humidity25Drawable = getResources().getDrawable(R.drawable.humidity_25);
+			}
+			humidityImgView.setImageDrawable(humidity25Drawable);
+		} else if(humidity < 50) {
+			if(humidity50Drawable == null) {
+				humidity50Drawable = getResources().getDrawable(R.drawable.humidity_50);
+			}
+			humidityImgView.setImageDrawable(humidity50Drawable);
+		} else if(humidity < 75) {
+			if(humidity75Drawable == null) {
+				humidity75Drawable = getResources().getDrawable(R.drawable.humidity_75);
+			}
+			humidityImgView.setImageDrawable(humidity75Drawable);
+		} else {
+			if(humidity100Drawable == null) {
+				humidity100Drawable = getResources().getDrawable(R.drawable.humidity_100);
+			}
+			humidityImgView.setImageDrawable(humidity100Drawable);
 		}
 	}
 }

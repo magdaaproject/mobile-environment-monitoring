@@ -50,6 +50,9 @@
     <string name="readings_ui_lbl_temperature">Temperature</string>
     <string name="readings_ui_lbl_temperature_img">A Thermometer</string>
     
+    <string name="readings_ui_lbl_humidity">Relative Humidity</string>
+    <string name="readings_ui_lbl_humidity_img">A Weather Icon</string>
+    
     <!-- preferences related strings -->
     <string name="preferences_display_title">Display Preferences</string>
     <string name="preferences_sensor_readings_title">Sensor Reading Preferences</string>

@@ -48,15 +48,35 @@
         
         <TextView
 	       android:id="@+id/readings_ui_lbl_temperature_value"
-	       style="@style/ui_elem_reading"
-	       android:text="21ºC" />
+	       style="@style/ui_elem_reading" />
 
         <ImageView
             android:id="@+id/readings_ui_lbl_temperature_img"
             style="@style/ui_elem_reading_img"
             android:layout_gravity="bottom|center_vertical"
-            android:contentDescription="@string/readings_ui_lbl_temperature_img"
-            android:src="@drawable/temperature_hot" />
+            android:contentDescription="@string/readings_ui_lbl_temperature_img"/>
+        
+    </LinearLayout>
+    
+    <!-- start humidity -->
+    <TextView
+       android:id="@+id/readings_ui_lbl_humidity"
+       style="@style/ui_elem_sub_header_1"
+       android:text="@string/readings_ui_lbl_humidity" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        
+        <TextView
+	       android:id="@+id/readings_ui_lbl_humidity_value"
+	       style="@style/ui_elem_reading" />
+
+        <ImageView
+            android:id="@+id/readings_ui_lbl_humidity_img"
+            style="@style/ui_elem_reading_img"
+            android:layout_gravity="bottom|center_vertical"
+            android:contentDescription="@string/readings_ui_lbl_humidity_img" />
         
     </LinearLayout>
 
