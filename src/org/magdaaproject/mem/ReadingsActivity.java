@@ -76,6 +76,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private String readingTimeFormat;
 	
 	private String temperatureFormat;
+	private String humidityFormat;
 
 	/*
 	 * (non-Javadoc)
@@ -98,7 +99,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         celsiusFormat = getString(R.string.readings_ui_lbl_temperature_value_celsius);
         fahrenheitFormat = getString(R.string.readings_ui_lbl_temperature_value_fahrenheit);
         kelvinFormat = getString(R.string.readings_ui_lbl_temperature_value_kelvin);
+        humidityFormat = getString(R.string.readings_ui_lbl_humidity_value);
         readingTimeFormat = getString(R.string.readings_ui_lbl_reading_time);
+        
         
         // get the cold and hot temperature preferences
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -131,12 +134,10 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         
         updateTemperatureImage(34);
         
-        humidityValueView.setText("47%");
-        
+        updateHumidityValue(47f);
         updateHumidityImage(47);
         
-        readingTimeView.setText(String.format(readingTimeFormat, TimeUtils.formatTime(System.currentTimeMillis())));
-        
+        updateReadingTime(System.currentTimeMillis());
         
         // TODO populate with live data
         
@@ -183,7 +184,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	
 	/**
 	 * a private method to update the temperature value label
-	 * @param temperature
+	 * @param temperature the recorded temperature
 	 */
 	private void updateTemperatureValue(float temperature) {
 		
@@ -200,6 +201,14 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		}
 		
         temperatureValueView.setText(mValue);
+	}
+	
+	/**
+	 * a private method to update the humidity value label
+	 * @param humidity the recorded humidity
+	 */
+	private void updateHumidityValue(float humidity) {
+		humidityValueView.setText(String.format(humidityFormat, humidity));
 	}
 	
 	/**
@@ -255,5 +264,13 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 			}
 			humidityImgView.setImageDrawable(humidity100Drawable);
 		}
+	}
+	
+	/**
+	 * update the sensor reading time based on the recorded time
+	 * @param time the time that the reading occurred
+	 */
+	private void updateReadingTime(long time) {
+		readingTimeView.setText(String.format(readingTimeFormat, time));
 	}
 }
