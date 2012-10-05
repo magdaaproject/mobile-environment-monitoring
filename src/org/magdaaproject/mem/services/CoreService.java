@@ -126,11 +126,13 @@ public class CoreService extends IOIOService {
 			collectGpsLocationInfo = mPreferences.getBoolean("preferences_collection_location_gps", true);
 			
 			if(collectGpsLocationInfo) {
-				
 				// output verbose debug log info
 				if(sVerboseLog) {
 					Log.v(sLogTag, "need to collect location information from GPS");
 				}
+				
+				//TODO initiate the collection of location information
+				
 			} else {
 				
 				// use manual location info?
