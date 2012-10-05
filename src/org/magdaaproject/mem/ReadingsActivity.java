@@ -271,6 +271,6 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 * @param time the time that the reading occurred
 	 */
 	private void updateReadingTime(long time) {
-		readingTimeView.setText(String.format(readingTimeFormat, time));
+		readingTimeView.setText(String.format(readingTimeFormat, TimeUtils.formatTime(time)));
 	}
 }
