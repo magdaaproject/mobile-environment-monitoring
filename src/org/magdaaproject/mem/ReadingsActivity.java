@@ -23,6 +23,7 @@ import org.magdaaproject.utils.TimeUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -139,7 +140,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         
         updateReadingTime(System.currentTimeMillis());
         
-        // TODO populate with live data
+        // start the core service
+        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
+        startService(mIntent);
         
     }
 

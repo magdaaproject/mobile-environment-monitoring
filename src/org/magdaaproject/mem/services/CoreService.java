@@ -28,7 +28,11 @@ import org.magdaaproject.utils.UnitConversionUtils;
 import org.magdaaproject.utils.readings.ReadingsList;
 import org.magdaaproject.utils.readings.TempHumidityReading;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.SQLException;
 import android.net.Uri;
@@ -60,7 +64,10 @@ public class CoreService extends IOIOService {
 	private static final int sHumidityInputPin = 44;
 	
 	// sleep time between reading the input pins values
-	private static final int sSleepTime = 1000; // debug change, usually 30000
+	private static final int sSleepTime = 1000;
+	
+	// identification for the notification
+	private static final int sNotificationId = 1;
 	
 	/*
 	 * private class level variables
@@ -100,8 +107,48 @@ public class CoreService extends IOIOService {
 			Log.v(sLogTag, "service onStartCommand() called");
 		}
 		
+		// add the notification 
+		addNotification();
+		
 		// return the start sticky flag
 		return android.app.Service.START_STICKY;
+	}
+	
+	
+	/*
+	 * private method to add a notification icon
+	 */
+	@SuppressWarnings("deprecation")
+	private void addNotification() {
+		
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+		int mNotificationIcon = R.drawable.ic_stat_magdaa;
+		CharSequence mTickerText = getString(R.string.system_notification_ticker_text);
+		long mWhen = System.currentTimeMillis();
+
+		// create the notification and set the flag so that it stays up
+		Notification mNotification = new Notification(mNotificationIcon, mTickerText, mWhen);
+		mNotification.flags |= Notification.FLAG_ONGOING_EVENT;
+
+		// get the content of the notification
+		CharSequence mNotificationTitle = getString(R.string.system_notification_title);
+		CharSequence mNotificationContent = getString(R.string.system_notification_content);
+
+		// create the intent for the notification
+		// set flags so that the user returns to this activity and not a new one
+		Intent mNotificationIntent = new Intent(this, org.magdaaproject.mem.ReadingsActivity.class);
+		mNotificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+		// create a pending intent so that the system can use the above intent at a later time.
+		PendingIntent mPendingIntent = PendingIntent.getActivity(this, 0, mNotificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+		// complete the setup of the notification
+		mNotification.setLatestEventInfo(getApplicationContext(), mNotificationTitle, mNotificationContent, mPendingIntent);
+
+		// add the notification
+		mNotificationManager.notify(sNotificationId, mNotification);
+		
 	}
 	
 	/*
@@ -116,6 +163,10 @@ public class CoreService extends IOIOService {
 		if(sVerboseLog) {
 			Log.v(sLogTag, "service onDestroy() called");
 		}
+		
+		// clear the notification
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancel(sNotificationId);
 	}
 	
 	/*
