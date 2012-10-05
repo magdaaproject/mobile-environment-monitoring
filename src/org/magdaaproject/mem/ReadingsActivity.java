@@ -78,6 +78,8 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	
 	private String temperatureFormat;
 	private String humidityFormat;
+	
+	private Intent coreServiceIntent = null;
 
 	/*
 	 * (non-Javadoc)
@@ -141,9 +143,8 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         updateReadingTime(System.currentTimeMillis());
         
         // start the core service
-        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
-        startService(mIntent);
-        
+        coreServiceIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
+        startService(coreServiceIntent);
     }
 
     /*
@@ -154,6 +155,21 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onDestroy()
+	 */
+	@Override
+	public void onDestroy() {
+		
+		// stop the service
+		if(coreServiceIntent != null) {
+			stopService(coreServiceIntent);
+		}
+		
+		super.onDestroy();
 	}
 	
 	/**

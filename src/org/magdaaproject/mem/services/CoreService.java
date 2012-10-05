@@ -34,10 +34,12 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.exception.ConnectionLostException;
@@ -73,8 +75,15 @@ public class CoreService extends IOIOService {
 	 * private class level variables
 	 */
 	private ReadingsList listOfReadings;
-	private long readingInterval = 10 * sSleepTime;
+	private long readingInterval;
 	private long nextReadingTime = System.currentTimeMillis() + readingInterval;
+	
+	private boolean collectLocationInfo = false;
+	private boolean collectGpsLocationInfo = false;
+	private boolean collectManualLocationInfo = false;
+	
+	private float manualLatitude;
+	private float manualLongitude;
 	
 	/*
 	 * (non-Javadoc)
@@ -84,12 +93,75 @@ public class CoreService extends IOIOService {
 	public void onCreate() {
 		super.onCreate();
 		
-		// initialise variables
-		listOfReadings = new ReadingsList();
-		
 		// output verbose debug log info
 		if(sVerboseLog) {
 			Log.v(sLogTag, "service onCreate() called");
+		}
+		
+		// initialise variables
+		listOfReadings = new ReadingsList();
+		
+		// get the required preferences
+		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		
+		// get the reading interval
+		try {
+			readingInterval = Long.parseLong(
+					mPreferences.getString("preferences_collection_interval", getString(R.string.preferences_collection_interval_default)));
+		} catch (NumberFormatException e) {
+			readingInterval = Long.parseLong(getString(R.string.preferences_collection_interval_default));
+		}
+		
+		// determine if we need to collect location information
+		collectLocationInfo = mPreferences.getBoolean("preferences_collection_location", true);
+		
+		if(collectLocationInfo) {
+			
+			// output verbose debug log info
+			if(sVerboseLog) {
+				Log.v(sLogTag, "need to collect location information");
+			}
+			
+			// use GPS for location info?
+			collectGpsLocationInfo = mPreferences.getBoolean("preferences_collection_location_gps", true);
+			
+			if(collectGpsLocationInfo) {
+				
+				// output verbose debug log info
+				if(sVerboseLog) {
+					Log.v(sLogTag, "need to collect location information from GPS");
+				}
+			} else {
+				
+				// use manual location info?
+				collectManualLocationInfo = mPreferences.getBoolean("preferences_collection_location_manual", false);
+				
+				if(collectManualLocationInfo) {
+					
+					// output verbose debug log info
+					if(sVerboseLog) {
+						Log.v(sLogTag, "need to collect location information from manually entered valuse");
+					}
+				
+					// get the manually entered coordinates
+					manualLatitude = Float.parseFloat(mPreferences.getString("preferences_collection_location_manual_lat", "0"));
+					manualLongitude = Float.parseFloat(mPreferences.getString("preferences_collection_location_manual_lng", "0"));
+					
+					// output verbose debug log info
+					if(sVerboseLog) {
+						Log.v(sLogTag, "manual latitude: '" + manualLatitude + "'");
+						Log.v(sLogTag, "manual longitude: '" + manualLongitude + "'");
+					}
+					
+				}
+			}
+		} else {
+			
+			// output verbose debug log info
+			if(sVerboseLog) {
+				Log.v(sLogTag, "do not need to collect location information");
+			}
+			
 		}
 	}
 	
