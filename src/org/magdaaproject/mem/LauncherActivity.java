@@ -20,6 +20,7 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.utils.FileUtils;
+import org.magdaaproject.utils.ServalUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,6 +51,7 @@ public class LauncherActivity extends Activity implements OnClickListener {
 	private static final String sTag = "LauncherActivity";
 	
 	private static final int sNoExternalStorage = 0;
+	private static final int sNoServalMesh = 1;
 
 	/*
 	 * (non-Javadoc)
@@ -90,6 +92,12 @@ public class LauncherActivity extends Activity implements OnClickListener {
         if(FileUtils.isExternalStorageAvailable() == false) {
         	mAllowStart = false;
         	showDialog(sNoExternalStorage);
+        }
+        
+        // check that Serval Mesh is installed
+        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
+        	mAllowStart = false;
+        	showDialog(sNoServalMesh);
         }
         
         //TODO check that Serval Mesh is installed
@@ -156,6 +164,15 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		switch(id) {
 		case sNoExternalStorage:
 			mBuilder.setMessage(R.string.launcher_ui_dialog_no_external_storage)
+			.setCancelable(false)
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			return mBuilder.create();
+		case sNoServalMesh:
+			mBuilder.setMessage(R.string.launcher_ui_dialog_no_serval_mesh)
 			.setCancelable(false)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
