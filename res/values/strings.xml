@@ -40,6 +40,8 @@
     <string name="launcher_ui_btn_start">Start</string>
     <string name="launcher_ui_btn_contact">Contact</string>
     
+    <string name="launcher_ui_dialog_no_external_storage">External storage, such as an SD Card, must be enabled before using this application</string>
+    
     <!-- readings activity screen -->
     <string name="readings_ui_lbl_header">Sensor Readings</string>
     

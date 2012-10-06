@@ -19,7 +19,12 @@
  */
 package org.magdaaproject.mem;
 
+import org.magdaaproject.utils.FileUtils;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -43,12 +48,15 @@ public class LauncherActivity extends Activity implements OnClickListener {
 	 * private class level constants
 	 */
 	private static final String sTag = "LauncherActivity";
+	
+	private static final int sNoExternalStorage = 0;
 
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
@@ -76,12 +84,24 @@ public class LauncherActivity extends Activity implements OnClickListener {
         // finalise the string and display it
         mTextView.setText(TextUtils.concat(mStartText, mStep01, mStep02, mStep03, mStep04, mFinishText));
         
+        boolean mAllowStart = true;
+        
+        // check on external storage
+        if(FileUtils.isExternalStorageAvailable() == false) {
+        	mAllowStart = false;
+        	showDialog(sNoExternalStorage);
+        }
+        
+        //TODO check that Serval Mesh is installed
+        //TODO check that Serval Mesh is running
+        
         //setup the buttons
         Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
         mButton.setOnClickListener(this);
         
         mButton = (Button) findViewById(R.id.launcher_ui_btn_start);
         mButton.setOnClickListener(this);
+        mButton.setEnabled(mAllowStart);
         
         mButton = (Button) findViewById(R.id.launcher_ui_btn_contact);
         mButton.setOnClickListener(this);
@@ -119,6 +139,33 @@ public class LauncherActivity extends Activity implements OnClickListener {
 			Log.w(sTag, "an unknown view fired an onClick event");
 		}
 		
+	}
+	
+	/*
+	 * callback method used to construct the required dialog
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreateDialog(int)
+	 */
+	@SuppressWarnings("deprecation")
+	@Override
+	protected Dialog onCreateDialog(int id) {
+
+		AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
+		
+		// determine which dialog to show
+		switch(id) {
+		case sNoExternalStorage:
+			mBuilder.setMessage(R.string.launcher_ui_dialog_no_external_storage)
+			.setCancelable(false)
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			return mBuilder.create();
+		default:
+			return super.onCreateDialog(id);
+		}
 	}
 	
 	/*
