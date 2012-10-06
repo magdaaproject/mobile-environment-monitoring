@@ -90,6 +90,8 @@ public class CoreService extends IOIOService {
 	private LocationManager locationManager = null;
 	private LocationCollector locationCollector = null;
 	
+	private String broadcastIntentAction = null;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see ioio.lib.util.android.IOIOService#onCreate()
@@ -105,6 +107,9 @@ public class CoreService extends IOIOService {
 		
 		// initialise variables
 		listOfReadings = new ReadingsList();
+		
+		// get necessary information
+		broadcastIntentAction = getString(R.string.system_broadcast_intent_action);
 		
 		// get the required preferences
 		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -383,12 +388,20 @@ public class CoreService extends IOIOService {
 						if(sVerboseLog) {
 							Log.v(sLogTag, String.format("new database entry %s: %s, %s", newRecord.getLastPathSegment(), mAvgTemp, mAvgHumidity));
 						}
+						
+						// send the broadcast intent
+						Intent mIntent = new Intent();
+						mIntent.setAction(broadcastIntentAction);
+						mIntent.setData(newRecord);
+						
+						sendBroadcast(mIntent, "org.magdaaproject.mem.provider.items.READ");
+						
+						// increment the reading interval
+						nextReadingTime = System.currentTimeMillis() + readingInterval;
+						
 					} catch (SQLException e) {
 						Log.e(sLogTag, "unable to write new sensor reading to the database", e);
 					}
-					
-					// increment the reading interval
-					nextReadingTime = System.currentTimeMillis() + readingInterval;
 				}
 				
 				// sleep for the desired amount of time

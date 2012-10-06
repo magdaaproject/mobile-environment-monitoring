@@ -122,6 +122,9 @@
     <string name="system_content_provider_permission_write_label">Write MaGDAA MEM Sensor Readings</string>
     <string name="system_content_provider_permission_write_description">Write MaGDAA MEM Sensor Readings such as Temperature and Humidity</string>
     
+    <!-- broadcast related string -->
+    <string name="system_broadcast_intent_action">org.magdaaproject.mem.NEW_READING</string>
+    
     <!-- permission group -->
     <string name="system_magdaa_permission_group_label">MaGDAA MEM Permissions</string>
     <string name="system_magdaa_permission_group_description">Permissions related to actions that can be undertaken with the MaGDAA MEM software</string>
