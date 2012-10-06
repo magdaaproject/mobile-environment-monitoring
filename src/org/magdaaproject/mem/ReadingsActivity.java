@@ -19,18 +19,25 @@
  */
 package org.magdaaproject.mem;
 
+import org.magdaaproject.mem.provider.ReadingsContract;
 import org.magdaaproject.utils.TimeUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -38,6 +45,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -52,7 +60,8 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	/*
 	 * private class level constants
 	 */
-	//private static final String sTag = "ReadingsActivity";
+	private static final boolean sVerboseLog = true;
+	private static final String sLogTag = "ReadingsActivity";
 	private static final int sGpsNotEnabledDialog = 0;
 	
 	/*
@@ -152,20 +161,26 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         mPreferences = null;
         
         // populate the views with test data
-        updateSensorStatus(true);
-        
-        updateTemperatureValue(21.2f);
-        
-        updateTemperatureImage(34);
-        
-        updateHumidityValue(47f);
-        updateHumidityImage(47);
-        
-        updateReadingTime(System.currentTimeMillis());
+//        updateSensorStatus(true);
+//        
+//        updateTemperatureValue(21.2f);
+//        
+//        updateTemperatureImage(34);
+//        
+//        updateHumidityValue(47f);
+//        updateHumidityImage(47);
+//        
+//        updateReadingTime(System.currentTimeMillis());
         
         // start the core service
         coreServiceIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
         startService(coreServiceIntent);
+        
+        // register for readings updates
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_action));
+        
+        registerReceiver(newReadingsReceiver, mIntentFilter);
     }
 
     /*
@@ -225,6 +240,70 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 			return super.onCreateDialog(id);
 		}
 	}
+	
+	
+	/**
+	 * a broadcast receiver used to receive notifications of new readings
+	 */
+	private BroadcastReceiver newReadingsReceiver = new BroadcastReceiver() {
+		
+		/*
+		 * private inner class level variables
+		 */
+		private String[] projection = null; 
+		private ContentResolver contentResolver = null;
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			// output verbose debug log info
+			if(sVerboseLog) {
+				Log.v(sLogTag, "newReadingsReceiver called");
+				Log.v(sLogTag, "new reading uri '" + intent.getDataString() + "'");
+			}
+			
+			// define the projection
+			if(projection == null) {
+				projection = new String[3];
+				projection[0] = ReadingsContract.Table.TEMPERATURE;
+				projection[1] = ReadingsContract.Table.HUMIDITY;
+				projection[2] = ReadingsContract.Table.TIMESTAMP;
+			}
+			
+			// get a content resolver if required
+			if(contentResolver == null) {
+				contentResolver = context.getContentResolver();
+			}
+			
+			// get the URI from the intent
+			Uri mNewRecord = intent.getData();
+			
+			// get the data
+			Cursor mCursor = contentResolver.query(
+					mNewRecord, 
+					projection, 
+					null, 
+					null, 
+					null);
+			
+			if(mCursor != null && mCursor.getCount() > 0) {
+				mCursor.moveToFirst();
+				
+				// update the temperature
+				updateTemperatureValue(mCursor.getFloat(mCursor.getColumnIndex(projection[0])));
+			    updateTemperatureImage(mCursor.getFloat(mCursor.getColumnIndex(projection[0])));
+			    
+			    // update the humidity
+			    updateHumidityValue(mCursor.getFloat(mCursor.getColumnIndex(projection[1])));
+		        updateHumidityImage(mCursor.getFloat(mCursor.getColumnIndex(projection[1])));
+		        
+		        // update the reading time
+		        updateReadingTime(mCursor.getLong(mCursor.getColumnIndex(projection[2])));
+		        
+		        mCursor.close();
+			}
+		}
+	};
 	
 	/**
 	 * a private method to update the sensor status label
