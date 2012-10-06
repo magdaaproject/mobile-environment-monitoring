@@ -90,7 +90,8 @@ public class CoreService extends IOIOService {
 	private LocationManager locationManager = null;
 	private LocationCollector locationCollector = null;
 	
-	private String broadcastIntentAction = null;
+	private String newReadingIntentAction = null;
+	private String sensorStatusIntentAction = null;
 	
 	/*
 	 * (non-Javadoc)
@@ -109,7 +110,8 @@ public class CoreService extends IOIOService {
 		listOfReadings = new ReadingsList();
 		
 		// get necessary information
-		broadcastIntentAction = getString(R.string.system_broadcast_intent_action);
+		newReadingIntentAction = getString(R.string.system_broadcast_intent_new_reading_action);
+		sensorStatusIntentAction = getString(R.string.system_broadcast_intent_sensor_status_action);
 		
 		// get the required preferences
 		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -297,8 +299,17 @@ public class CoreService extends IOIOService {
         protected void setup() throws ConnectionLostException {
 			
 			try {
+				
+				// setup the analog inputs
 				tempInput = ioio_.openAnalogInput(sTempInputPin);
 				humidityInput = ioio_.openAnalogInput(sHumidityInputPin);
+				
+				// send a broadcast intent
+				Intent mIntent = new Intent();
+				mIntent.setAction(sensorStatusIntentAction);
+				mIntent.putExtra("status", getString(R.string.system_broadcast_intent_sensor_status_connected));
+				
+				sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
 			} catch (ConnectionLostException e) {
 				Log.e(sLogTag, "connection to ioio lost during setup", e);
 				throw e;
@@ -391,7 +402,7 @@ public class CoreService extends IOIOService {
 						
 						// send the broadcast intent
 						Intent mIntent = new Intent();
-						mIntent.setAction(broadcastIntentAction);
+						mIntent.setAction(newReadingIntentAction);
 						mIntent.setData(newRecord);
 						
 						sendBroadcast(mIntent, "org.magdaaproject.mem.provider.items.READ");
@@ -411,6 +422,22 @@ public class CoreService extends IOIOService {
 				Log.e(sLogTag, "inerrupted exception thrown while reading values", e);
 				ioio_.disconnect();
 			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * @see ioio.lib.util.BaseIOIOLooper#disconnected()
+		 */
+		@Override
+		public void disconnected() {
+			
+			// send a broadcast intent
+			Intent mIntent = new Intent();
+			mIntent.setAction(sensorStatusIntentAction);
+			mIntent.putExtra("status", getString(R.string.system_broadcast_intent_sensor_status_disconnected));
+			
+			sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
+			
 		}
 	}
 	

@@ -57,6 +57,14 @@
         android:protectionLevel="signature" 
         android:name="org.magdaaproject.mem.provider.items.WRITE" 
         android:permissionGroup="org.magdaaproject.mem.permissions"/>
+    
+    <permission 
+        android:description="@string/system_broadcast_intent_sensor_status_permission_description" 
+        android:label="@string/system_broadcast_intent_sensor_status_permission_label" 
+        android:icon="@drawable/ic_launcher" 
+        android:protectionLevel="normal" 
+        android:name="org.magdaaproject.mem.SENSOR_STATUS" 
+        android:permissionGroup="org.magdaaproject.mem.permissions"/>
 
 
     <application

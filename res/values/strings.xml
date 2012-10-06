@@ -123,7 +123,15 @@
     <string name="system_content_provider_permission_write_description">Write MaGDAA MEM Sensor Readings such as Temperature and Humidity</string>
     
     <!-- broadcast related string -->
-    <string name="system_broadcast_intent_action">org.magdaaproject.mem.NEW_READING</string>
+    <string name="system_broadcast_intent_new_reading_action">org.magdaaproject.mem.NEW_READING</string>
+    <string name="system_broadcast_intent_sensor_status_action">org.magdaaproject.mem.SENSOR_STATUS</string>
+    
+    <string name="system_broadcast_intent_sensor_status_permission_label">MaGDAA MEM Sensor Status</string>
+    <string name="system_broadcast_intent_sensor_status_permission_description">Receive Notification of MaGDAA MEM Sensor Status</string>
+    
+    <string name="system_broadcast_intent_sensor_status_connected">Connected</string>
+    <string name="system_broadcast_intent_sensor_status_disconnected">Disconnected</string>
+    <string name="system_broadcast_intent_sensor_status_connecting">Connecting</string>
     
     <!-- permission group -->
     <string name="system_magdaa_permission_group_label">MaGDAA MEM Permissions</string>

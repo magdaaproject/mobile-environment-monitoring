@@ -178,7 +178,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         
         // register for readings updates
         IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_action));
+        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_new_reading_action));
         
         registerReceiver(newReadingsReceiver, mIntentFilter);
     }
