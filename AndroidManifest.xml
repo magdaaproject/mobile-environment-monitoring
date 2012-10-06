@@ -28,6 +28,10 @@
         android:minSdkVersion="10"
         android:targetSdkVersion="15" />
     
+    <!-- uses features -->
+    <uses-feature android:required="true" android:name="android.hardware.location.gps"/>
+    <uses-feature android:required="true" android:name="android.hardware.wifi"/>
+    
     <!-- uses permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH"/> <!-- access IOIO -->
     <uses-permission android:name="android.permission.INTERNET"/> <!-- access IOIO -->
