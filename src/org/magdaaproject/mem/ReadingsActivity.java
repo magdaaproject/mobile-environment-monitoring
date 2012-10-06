@@ -20,6 +20,7 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.mem.provider.ReadingsContract;
+import org.magdaaproject.utils.ServalUtils;
 import org.magdaaproject.utils.TimeUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
 
@@ -95,6 +96,8 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private String humidityFormat;
 	
 	private Intent coreServiceIntent = null;
+	
+	private BroadcastReceiver servalMeshStatusReceiver = null;
 
 	/*
 	 * (non-Javadoc)
@@ -187,6 +190,18 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         mIntentFilter.addAction(getString(R.string.system_broadcast_intent_sensor_status_action));
         
         registerReceiver(sensorStatusReceiver, mIntentFilter);
+        
+        // register for changes in the status of Serval Mesh
+        mIntentFilter = new IntentFilter();
+        
+        for(int i = 0; i < ServalUtils.SERVAL_STATUS_ACTIONS.length; i++) {
+        	mIntentFilter.addAction(ServalUtils.SERVAL_STATUS_ACTIONS[i]);
+        }
+        
+        servalMeshStatusReceiver = ServalUtils.getStatusReceiver();
+        
+        registerReceiver(servalMeshStatusReceiver, mIntentFilter);
+        
     }
 
     /*
@@ -213,6 +228,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		
 		unregisterReceiver(newReadingsReceiver);
 		unregisterReceiver(sensorStatusReceiver);
+		unregisterReceiver(servalMeshStatusReceiver);
 		
 		super.onDestroy();
 	}
