@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.SQLException;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Environment;
@@ -140,7 +141,6 @@ public class CoreService extends IOIOService {
 				locationCollector = new LocationCollector();
 				
 				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationCollector);
-				
 				
 			} else {
 				
@@ -358,48 +358,10 @@ public class CoreService extends IOIOService {
 						Log.v(sLogTag, "need to save a reading");
 					}
 					
-					// calculate the average temperature and humidity
-					float mAvgTemp = 0;
-					float mAvgHumidity = 0;
+					float mAverages[] = calculateAverages(listOfReadings);
 					
-					// add up the readings
-					// TODO take into account the age of the readings?
-					for(int i = 0; i < listOfReadings.size(); i++) {
-						mSensorReading = (TempHumidityReading) listOfReadings.get(i);
-						
-						mAvgTemp += mSensorReading.getTemp();
-						mAvgHumidity += mSensorReading.getHumidity();
-					}
-					
-					// divide by the number of readings
-					mAvgTemp     = mAvgTemp / listOfReadings.size();
-					mAvgHumidity = mAvgHumidity / listOfReadings.size();
-					
-					if(sVerboseLog) {
-						Log.v(sLogTag, "average temperature: '" + mAvgTemp + "'");
-						Log.v(sLogTag, "average humidity: '" + mAvgHumidity + "'");
-					}
-					
-					// round to a single decimal point precision
-					mAvgTemp = Math.round(mAvgTemp * 10) / 10;
-					mAvgHumidity = Math.round(mAvgHumidity * 10) / 10;
-					
-					if(sVerboseLog) {
-						Log.v(sLogTag, "rounded average temperature: '" + mAvgTemp + "'");
-						Log.v(sLogTag, "rounded average humidity: '" + mAvgHumidity + "'");
-					}
-					
-					// add additional debug output if necessary
-					if(sVerboseLog) {
-						String mOutputPath = Environment.getExternalStorageDirectory().getPath();
-						mOutputPath += getString(R.string.system_file_Path_debug_output);
-						
-						try {
-							Log.v(sLogTag, "list debug file: " + listOfReadings.dumpData(mOutputPath));
-						} catch (IOException e) {
-							Log.v(sLogTag, "unable to write list debug file", e);
-						}
-					}
+					float mAvgTemp = mAverages[0];
+					float mAvgHumidity = mAverages[1];
 					
 					// write a new sensor reading entry
 					ContentValues mValues = new ContentValues();
@@ -408,6 +370,11 @@ public class CoreService extends IOIOService {
 					mValues.put(ReadingsContract.Table.TIMESTAMP, System.currentTimeMillis());
 					mValues.put(ReadingsContract.Table.TEMPERATURE, mAvgTemp);
 					mValues.put(ReadingsContract.Table.HUMIDITY, mAvgHumidity);
+					
+					// add location information if required
+					if(collectLocationInfo) {
+						mValues = addLocationInfo(mValues);
+					}
 					
 					// add the values to the database
 					try {
@@ -432,6 +399,97 @@ public class CoreService extends IOIOService {
 				ioio_.disconnect();
 			}
 		}
+	}
+	
+	/**
+	 * private method to calculate the average readings
+	 * 
+	 * @param listOfReadings a list of readings to process
+	 * @return and array of average readings
+	 */
+	private float[] calculateAverages(ReadingsList listOfReadings) {
+		
+		// calculate the average temperature and humidity
+		float mAvgTemp = 0;
+		float mAvgHumidity = 0;
+		TempHumidityReading mSensorReading;
+		
+		// add up the readings
+		// TODO take into account the age of the readings?
+		for(int i = 0; i < listOfReadings.size(); i++) {
+			mSensorReading = (TempHumidityReading) listOfReadings.get(i);
+			
+			mAvgTemp += mSensorReading.getTemp();
+			mAvgHumidity += mSensorReading.getHumidity();
+		}
+		
+		// divide by the number of readings
+		mAvgTemp     = mAvgTemp / listOfReadings.size();
+		mAvgHumidity = mAvgHumidity / listOfReadings.size();
+		
+		if(sVerboseLog) {
+			Log.v(sLogTag, "average temperature: '" + mAvgTemp + "'");
+			Log.v(sLogTag, "average humidity: '" + mAvgHumidity + "'");
+		}
+		
+		// round to a single decimal point precision
+		mAvgTemp = Math.round(mAvgTemp * 10) / 10;
+		mAvgHumidity = Math.round(mAvgHumidity * 10) / 10;
+		
+		if(sVerboseLog) {
+			Log.v(sLogTag, "rounded average temperature: '" + mAvgTemp + "'");
+			Log.v(sLogTag, "rounded average humidity: '" + mAvgHumidity + "'");
+		}
+		
+		float[] mAverages = new float[2];
+		mAverages[0] = mAvgTemp;
+		mAverages[1] = mAvgHumidity;
+
+		// add additional debug output if necessary
+		if(sVerboseLog) {
+			String mOutputPath = Environment.getExternalStorageDirectory().getPath();
+			mOutputPath += getString(R.string.system_file_Path_debug_output);
+			
+			try {
+				Log.v(sLogTag, "list debug file: " + listOfReadings.dumpData(mOutputPath));
+			} catch (IOException e) {
+				Log.v(sLogTag, "unable to write list debug file", e);
+			}
+		}
+		
+		return mAverages;
+	}
+	
+	/**
+	 * private method to add location information to the list
+	 * of content values if required
+	 * 
+	 * @param values a list of values
+	 * @return the updated list of values
+	 */
+	private ContentValues addLocationInfo(ContentValues values) {
+		
+		// determine which type of location information to add
+		if(collectGpsLocationInfo) {
+			
+			// get the current location information
+			Location mLocation = locationCollector.getCurrentLocation();
+			
+			// check to make sure a valid location is available
+			if(mLocation != null) {
+				// add the location information
+				values.put(ReadingsContract.Table.LATITUDE, mLocation.getLatitude());
+				values.put(ReadingsContract.Table.LONGITUDE, mLocation.getLongitude());
+				values.put(ReadingsContract.Table.ALTITUDE, mLocation.getAltitude());
+				values.put(ReadingsContract.Table.GPS_ACCURACY, mLocation.getAccuracy());
+			}
+		} else {
+			// add the manually entered location information
+			values.put(ReadingsContract.Table.LATITUDE, manualLatitude);
+			values.put(ReadingsContract.Table.LONGITUDE, manualLongitude);
+		}
+		
+		return values;
 	}
 	
 	/*
