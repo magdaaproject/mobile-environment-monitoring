@@ -181,6 +181,12 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         mIntentFilter.addAction(getString(R.string.system_broadcast_intent_new_reading_action));
         
         registerReceiver(newReadingsReceiver, mIntentFilter);
+        
+        // register for sensor status updates
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_sensor_status_action));
+        
+        registerReceiver(sensorStatusReceiver, mIntentFilter);
     }
 
     /*
@@ -204,6 +210,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		if(coreServiceIntent != null) {
 			stopService(coreServiceIntent);
 		}
+		
+		unregisterReceiver(newReadingsReceiver);
+		unregisterReceiver(sensorStatusReceiver);
 		
 		super.onDestroy();
 	}
@@ -303,6 +312,23 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		        mCursor.close();
 			}
 		}
+	};
+	
+	/**
+	 * a broadcast receiver used to receive notifications of new readings
+	 */
+	private BroadcastReceiver sensorStatusReceiver = new BroadcastReceiver() {
+
+		/*
+		 * (non-Javadoc)
+		 * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
+		 */
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// update the sensor status
+			updateSensorStatus(intent.getBooleanExtra("connected", false));
+		}
+		
 	};
 	
 	/**

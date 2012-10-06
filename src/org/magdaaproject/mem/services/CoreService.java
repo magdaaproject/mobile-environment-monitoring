@@ -307,7 +307,7 @@ public class CoreService extends IOIOService {
 				// send a broadcast intent
 				Intent mIntent = new Intent();
 				mIntent.setAction(sensorStatusIntentAction);
-				mIntent.putExtra("status", getString(R.string.system_broadcast_intent_sensor_status_connected));
+				mIntent.putExtra("connected", true);
 				
 				sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
 			} catch (ConnectionLostException e) {
@@ -434,10 +434,9 @@ public class CoreService extends IOIOService {
 			// send a broadcast intent
 			Intent mIntent = new Intent();
 			mIntent.setAction(sensorStatusIntentAction);
-			mIntent.putExtra("status", getString(R.string.system_broadcast_intent_sensor_status_disconnected));
+			mIntent.putExtra("connected", false);
 			
 			sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
-			
 		}
 	}
 	

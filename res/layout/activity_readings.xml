@@ -34,7 +34,8 @@
     <!-- sensor status -->
     <TextView
        android:id="@+id/readings_ui_lbl_sensor_status"
-       style="@style/ui_elem_sub_header_2" />
+       style="@style/ui_elem_sub_header_2"
+       android:text="@string/readings_ui_lbl_sensor_status_default" />
     
     <!-- start temperature -->
     <TextView
