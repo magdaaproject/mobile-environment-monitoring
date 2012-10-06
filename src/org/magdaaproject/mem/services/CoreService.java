@@ -145,7 +145,7 @@ public class CoreService extends IOIOService {
 				locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 				locationCollector = new LocationCollector();
 				
-				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationCollector);
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, (readingInterval / 2), 0, locationCollector);
 				
 			} else {
 				
