@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.SQLException;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
@@ -85,6 +86,9 @@ public class CoreService extends IOIOService {
 	private float manualLatitude;
 	private float manualLongitude;
 	
+	private LocationManager locationManager = null;
+	private LocationCollector locationCollector = null;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see ioio.lib.util.android.IOIOService#onCreate()
@@ -131,7 +135,12 @@ public class CoreService extends IOIOService {
 					Log.v(sLogTag, "need to collect location information from GPS");
 				}
 				
-				//TODO initiate the collection of location information
+				// initiate the collection of location information
+				locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+				locationCollector = new LocationCollector();
+				
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationCollector);
+				
 				
 			} else {
 				
@@ -241,6 +250,13 @@ public class CoreService extends IOIOService {
 		// clear the notification
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.cancel(sNotificationId);
+		
+		// if necessary stop listening for location updates
+		if(collectGpsLocationInfo) {
+			if(locationManager != null && locationCollector != null) {
+				locationManager.removeUpdates(locationCollector);
+			}
+		}
 	}
 	
 	/*
