@@ -65,6 +65,8 @@
     
     <string name="readings_ui_lbl_humidity_value">%.1f%%</string>
     
+    <string name="readings_ui_toast_serval_not_running">The Serval Mesh is not running, data sharing is not occuring</string>
+    
     <!-- preferences related strings -->
     <string name="preferences_display_title">Display Preferences</string>
     <string name="preferences_sensor_readings_title">Sensor Reading Preferences</string>

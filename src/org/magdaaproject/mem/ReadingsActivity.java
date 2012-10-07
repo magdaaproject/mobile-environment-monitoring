@@ -20,7 +20,7 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.mem.provider.ReadingsContract;
-import org.magdaaproject.utils.ServalUtils;
+import org.magdaaproject.utils.serval.ServalStatusReceiver;
 import org.magdaaproject.utils.TimeUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
 
@@ -51,6 +51,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * The readings activity for the MEM software, this is where the readings
@@ -97,7 +98,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	
 	private Intent coreServiceIntent = null;
 	
-	private BroadcastReceiver servalMeshStatusReceiver = null;
+	private ServalStatusReceiver servalMeshStatusReceiver = null;
 
 	/*
 	 * (non-Javadoc)
@@ -179,29 +180,8 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         coreServiceIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
         startService(coreServiceIntent);
         
-        // register for readings updates
-        IntentFilter mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_new_reading_action));
-        
-        registerReceiver(newReadingsReceiver, mIntentFilter);
-        
-        // register for sensor status updates
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_sensor_status_action));
-        
-        registerReceiver(sensorStatusReceiver, mIntentFilter);
-        
-        // register for changes in the status of Serval Mesh
-        mIntentFilter = new IntentFilter();
-        
-        for(int i = 0; i < ServalUtils.SERVAL_STATUS_ACTIONS.length; i++) {
-        	mIntentFilter.addAction(ServalUtils.SERVAL_STATUS_ACTIONS[i]);
-        }
-        
-        servalMeshStatusReceiver = ServalUtils.getStatusReceiver();
-        
-        registerReceiver(servalMeshStatusReceiver, mIntentFilter);
-        
+        // register the various broadcast receivers
+        registerReceivers();
     }
 
     /*
@@ -226,11 +206,80 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 			stopService(coreServiceIntent);
 		}
 		
+		// unregister the receivers
+		unregisterReceivers();
+		
+		super.onDestroy();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	public void onPause() {
+		
+		// unregister the receivers
+		unregisterReceivers();
+		
+		super.onPause();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	public void onResume() {
+		// register the receivers
+		registerReceivers();
+		
+		super.onResume();
+	}
+	
+	/*
+	 * method to register the various broadcast receivers
+	 */
+	private void registerReceivers() {
+		
+		// register for readings updates
+        IntentFilter mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_new_reading_action));
+        
+        registerReceiver(newReadingsReceiver, mIntentFilter);
+        
+        // register for sensor status updates
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(getString(R.string.system_broadcast_intent_sensor_status_action));
+        
+        registerReceiver(sensorStatusReceiver, mIntentFilter);
+        
+        // register for changes in the status of Serval Mesh
+        mIntentFilter = new IntentFilter();
+        
+        for(int i = 0; i < ServalStatusReceiver.SERVAL_STATUS_ACTIONS.length; i++) {
+        	mIntentFilter.addAction(ServalStatusReceiver.SERVAL_STATUS_ACTIONS[i]);
+        }
+        
+        if(servalMeshStatusReceiver == null) {
+        	servalMeshStatusReceiver = new ServalStatusReceiver();
+        }
+        
+        registerReceiver(servalMeshStatusReceiver, mIntentFilter);
+        
+	    // send off an intent to poll for the current state of the serval mesh
+		Intent mIntent = new Intent(ServalStatusReceiver.SERVAL_STATE_CHECK_ACTION);
+		startService(mIntent);
+	}
+	
+	/*
+	 * method to unregister the various broadcast receivers
+	 */
+	private void unregisterReceivers() {
+		
 		unregisterReceiver(newReadingsReceiver);
 		unregisterReceiver(sensorStatusReceiver);
 		unregisterReceiver(servalMeshStatusReceiver);
-		
-		super.onDestroy();
 	}
 	
 	/*
@@ -326,6 +375,11 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		        updateReadingTime(mCursor.getLong(mCursor.getColumnIndex(projection[2])));
 		        
 		        mCursor.close();
+			}
+			
+			// check on the status of the serval mesh
+			if(servalMeshStatusReceiver.getStatus() != ServalStatusReceiver.SERVAL_STATUS_ON) {
+				Toast.makeText(getApplicationContext(), R.string.readings_ui_toast_serval_not_running, Toast.LENGTH_LONG).show();
 			}
 		}
 	};

@@ -20,7 +20,7 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.utils.FileUtils;
-import org.magdaaproject.utils.ServalUtils;
+import org.magdaaproject.utils.serval.ServalUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
