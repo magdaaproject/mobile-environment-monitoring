@@ -317,9 +317,17 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	private void unregisterReceivers() {
 		
-		unregisterReceiver(newReadingsReceiver);
-		unregisterReceiver(sensorStatusReceiver);
-		unregisterReceiver(servalMeshStatusReceiver);
+		/*
+		 * workaround for a crash bug, no idea why I can't unregister what is
+		 * clearly a registered receiver as it responds to intents
+		 */
+		try {
+			unregisterReceiver(newReadingsReceiver);
+			unregisterReceiver(sensorStatusReceiver);
+			unregisterReceiver(servalMeshStatusReceiver);
+		} catch (IllegalArgumentException e) {
+			Log.w(sLogTag, "IllegalArgumentException thrown when unregistering receivers");
+		}
 	}
 	
 	/*
