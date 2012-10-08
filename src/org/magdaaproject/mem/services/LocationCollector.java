@@ -35,7 +35,7 @@ public class LocationCollector implements LocationListener {
 	 */
 	private static final int sTwoMinutes = 1000 * 60 * 2;
 	
-	private static final boolean sVerboseLog = true;
+	private static final boolean sVerboseLog = false;
 	private static final String sLogTag = "LocationCollector";
 	
 	/*

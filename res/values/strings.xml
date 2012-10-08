@@ -67,6 +67,14 @@
     
     <string name="readings_ui_toast_serval_not_running">The Serval Mesh is not running, data sharing is not occuring</string>
     
+    <string name="readings_ui_lbl_temperature_default_celsius">- ºC</string>
+    <string name="readings_ui_lbl_temperature_default_fahrenheit">- ºF</string>
+    <string name="readings_ui_lbl_temperature_default_kelvin">- ºK</string>
+    
+    <string name="readings_ui_lbl_humidity_default">- %</string>
+    
+    <string name="readings_ui_lbl_reading_time_default">Waiting for next reading&#8230;</string>
+    
     <!-- preferences related strings -->
     <string name="preferences_display_title">Display Preferences</string>
     <string name="preferences_sensor_readings_title">Sensor Reading Preferences</string>
@@ -131,6 +139,9 @@
     <!-- broadcast related string -->
     <string name="system_broadcast_intent_new_reading_action">org.magdaaproject.mem.NEW_READING</string>
     <string name="system_broadcast_intent_sensor_status_action">org.magdaaproject.mem.SENSOR_STATUS</string>
+
+    <string name="system_broadcast_intent_sensor_reading_permission_label">MaGDAA MEM New Reading</string>
+    <string name="system_broadcast_intent_sensor_reading_permission_description">Receive Notification of MaGDAA MEM New Reading</string>
     
     <string name="system_broadcast_intent_sensor_status_permission_label">MaGDAA MEM Sensor Status</string>
     <string name="system_broadcast_intent_sensor_status_permission_description">Receive Notification of MaGDAA MEM Sensor Status</string>

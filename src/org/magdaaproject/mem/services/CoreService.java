@@ -20,6 +20,7 @@
 package org.magdaaproject.mem.services;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import org.magdaaproject.mem.R;
 import org.magdaaproject.mem.provider.ReadingsContract;
@@ -93,6 +94,8 @@ public class CoreService extends IOIOService {
 	private String newReadingIntentAction = null;
 	private String sensorStatusIntentAction = null;
 	
+	private DecimalFormat decimalFormat;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see ioio.lib.util.android.IOIOService#onCreate()
@@ -123,6 +126,9 @@ public class CoreService extends IOIOService {
 		} catch (NumberFormatException e) {
 			readingInterval = Long.parseLong(getString(R.string.preferences_collection_interval_default));
 		}
+		
+		// define the rounding method
+		decimalFormat = new DecimalFormat("#.#");
 		
 		// determine if we need to collect location information
 		collectLocationInfo = mPreferences.getBoolean("preferences_collection_location", true);
@@ -311,6 +317,12 @@ public class CoreService extends IOIOService {
 				
 				sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
 			} catch (ConnectionLostException e) {
+				
+				// send a broadcast intent
+				Intent mIntent = new Intent();
+				mIntent.setAction(sensorStatusIntentAction);
+				mIntent.putExtra("connected", false);
+				
 				Log.e(sLogTag, "connection to ioio lost during setup", e);
 				throw e;
 			}
@@ -403,9 +415,10 @@ public class CoreService extends IOIOService {
 						// send the broadcast intent
 						Intent mIntent = new Intent();
 						mIntent.setAction(newReadingIntentAction);
-						mIntent.setData(newRecord);
+						mIntent.setDataAndType(newRecord, ReadingsContract.CONTENT_TYPE_ITEM);
 						
-						sendBroadcast(mIntent, "org.magdaaproject.mem.provider.items.READ");
+						sendBroadcast(mIntent, "org.magdaaproject.mem.NEW_READING");
+						sendBroadcast(mIntent);
 						
 						// increment the reading interval
 						nextReadingTime = System.currentTimeMillis() + readingInterval;
@@ -472,8 +485,10 @@ public class CoreService extends IOIOService {
 		}
 		
 		// round to a single decimal point precision
-		mAvgTemp = Math.round(mAvgTemp * 10) / 10;
-		mAvgHumidity = Math.round(mAvgHumidity * 10) / 10;
+//		mAvgTemp = Math.round(mAvgTemp * 10) / 10;
+//		mAvgHumidity = Math.round(mAvgHumidity * 10) / 10;
+		mAvgTemp = Float.parseFloat(decimalFormat.format(mAvgTemp));
+		mAvgHumidity = Float.parseFloat(decimalFormat.format(mAvgHumidity));
 		
 		if(sVerboseLog) {
 			Log.v(sLogTag, "rounded average temperature: '" + mAvgTemp + "'");

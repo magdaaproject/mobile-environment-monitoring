@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -164,6 +165,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
         
         mPreferences = null;
         
+        // reset the UI
+        resetUI();
+        
         // populate the views with test data
 //        updateSensorStatus(true);
 //        
@@ -231,11 +235,42 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	@Override
 	public void onResume() {
+		
+		// reset the UI
+        resetUI();
+		
 		// register the receivers
 		registerReceivers();
 		
 		super.onResume();
 	}
+	
+	/*
+	 * method to reset the UI on start or after a pause
+	 */
+	private void resetUI() {
+		
+		String mValue = null;
+		
+		// reset the temperature UI component
+		if(temperatureFormat.equals("c")) {
+			mValue = getString(R.string.readings_ui_lbl_temperature_default_celsius);
+		} else if(temperatureFormat.equals("f")) {
+			mValue = getString(R.string.readings_ui_lbl_temperature_default_fahrenheit);
+		} else {
+			mValue = getString(R.string.readings_ui_lbl_temperature_default_kelvin);
+		}
+		
+        temperatureValueView.setText(mValue);
+        
+        // reset the humidity ui component
+        mValue = getString(R.string.readings_ui_lbl_humidity_default);
+        humidityValueView.setText(mValue);
+        
+        // reset the time ui component
+        readingTimeView.setText(R.string.readings_ui_lbl_reading_time_default);
+	}
+	
 	
 	/*
 	 * method to register the various broadcast receivers
@@ -245,6 +280,11 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		// register for readings updates
         IntentFilter mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(getString(R.string.system_broadcast_intent_new_reading_action));
+        try {
+			mIntentFilter.addDataType(ReadingsContract.CONTENT_TYPE_ITEM);
+		} catch (MalformedMimeTypeException e) {
+			Log.e(sLogTag, "unable to set type for new reading receiver", e);
+		}
         
         registerReceiver(newReadingsReceiver, mIntentFilter);
         
@@ -395,6 +435,12 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		 */
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			
+			// output verbose debug log info
+			if(sVerboseLog) {
+				Log.v(sLogTag, "sensorStatusReceiver called");
+			}
+			
 			// update the sensor status
 			updateSensorStatus(intent.getBooleanExtra("connected", false));
 		}

@@ -95,13 +95,10 @@ public class LauncherActivity extends Activity implements OnClickListener {
         }
         
         // check that Serval Mesh is installed
-        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
-        	mAllowStart = false;
-        	showDialog(sNoServalMesh);
-        }
-        
-        //TODO check that Serval Mesh is installed
-        //TODO check that Serval Mesh is running
+//        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
+//        	mAllowStart = false;
+//        	showDialog(sNoServalMesh);
+//        }
         
         //setup the buttons
         Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
