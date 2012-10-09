@@ -124,7 +124,7 @@ public class InstanceWriter extends BroadcastReceiver {
 				// write the file
 				// debug code
 				String mOutputPath = Environment.getExternalStorageDirectory().getPath();
-				mOutputPath += context.getString(R.string.system_file_Path_debug_output);
+				mOutputPath += context.getString(R.string.system_file_path_debug_output);
 				
 				String mFileName = FileUtils.writeTempFile(mXmlString, mOutputPath);
 				

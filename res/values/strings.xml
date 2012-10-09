@@ -155,7 +155,7 @@
     
     <!-- file system related strings -->
     <string name="system_file_path_parent">/magdaaproject/</string>
-    <string name="system_file_Path_debug_output">/magdaaproject/debug/</string>
+    <string name="system_file_path_debug_output">/magdaaproject/debug/</string>
     
     <!-- ui element strings -->
     <string name="ui_elem_bullet_span">15</string>

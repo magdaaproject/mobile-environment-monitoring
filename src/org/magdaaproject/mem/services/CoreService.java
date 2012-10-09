@@ -500,7 +500,7 @@ public class CoreService extends IOIOService {
 		// add additional debug output if necessary
 		if(sVerboseLog) {
 			String mOutputPath = Environment.getExternalStorageDirectory().getPath();
-			mOutputPath += getString(R.string.system_file_Path_debug_output);
+			mOutputPath += getString(R.string.system_file_path_debug_output);
 
 			try {
 				Log.v(sLogTag, "list debug file: " + listOfReadings.dumpData(mOutputPath));
