@@ -134,6 +134,17 @@
             android:description="@string/system_content_provider_description" 
             android:label="@string/system_content_provider_label" 
             android:icon="@drawable/ic_launcher"/>
+        
+        <!-- broadcast receivers -->
+        <receiver 
+            android:name=".xforms.InstanceWriter"
+            android:permission="org.magdaaproject.mem.NEW_READING"
+            android:enabled="true">
+            <intent-filter>
+                 <action android:name="org.magdaaproject.mem.NEW_READING" />
+                 <data android:mimeType="vnd.android.cursor.item/vnd.org.magdaaproject.mem.provider.items.readings"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
