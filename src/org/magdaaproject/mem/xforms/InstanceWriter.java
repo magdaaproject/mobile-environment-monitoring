@@ -19,6 +19,7 @@
  */
 package org.magdaaproject.mem.xforms;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -109,6 +110,9 @@ public class InstanceWriter extends BroadcastReceiver {
 			
 			mElements.put("Location", mLocation);
 			
+			// store the timestamp
+			Long mTimeStamp = mCursor.getLong(mCursor.getColumnIndex(ReadingsContract.Table.TIMESTAMP));
+			
 			// play nice and tidy up
 			mCursor.close();
 
@@ -122,11 +126,17 @@ public class InstanceWriter extends BroadcastReceiver {
 				String mXmlString = mXForm.buildXFormsData(mElements, INSTANCE_ID);
 				
 				// write the file
-				// debug code
 				String mOutputPath = Environment.getExternalStorageDirectory().getPath();
-				mOutputPath += context.getString(R.string.system_file_path_debug_output);
+				mOutputPath += context.getString(R.string.system_file_path_odk_instances);
 				
-				String mFileName = FileUtils.writeTempFile(mXmlString, mOutputPath);
+				// get the odk specific directory and file name
+				String mFileNamePart = context.getString(R.string.system_xforms_form_name);
+				mFileNamePart += "_" + OpenDataKitUtils.getInstanceFileName(mTimeStamp);
+				
+				//finalise the output path
+				mOutputPath += File.separator + mFileNamePart;
+				
+				String mFileName = FileUtils.writeNewFile(mXmlString, mFileNamePart + ".xml", mOutputPath);
 				
 				// output some debug logging
 				if(sVerboseLog) {
