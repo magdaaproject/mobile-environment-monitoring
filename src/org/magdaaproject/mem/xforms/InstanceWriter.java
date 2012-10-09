@@ -28,6 +28,7 @@ import org.magdaaproject.mem.provider.ReadingsContract;
 import org.magdaaproject.utils.DeviceUtils;
 import org.magdaaproject.utils.FileUtils;
 import org.magdaaproject.utils.OpenDataKitUtils;
+import org.magdaaproject.utils.serval.RhizomeUtils;
 import org.magdaaproject.utils.xforms.XFormsException;
 import org.magdaaproject.utils.xforms.XFormsUtils;
 
@@ -39,6 +40,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * receive the new reading broadcast and write an XForms instance file 
@@ -115,37 +117,96 @@ public class InstanceWriter extends BroadcastReceiver {
 			
 			// play nice and tidy up
 			mCursor.close();
+			
+			String mXmlString = null;
+			String mFileName = null;
+			String mResult = null;
 
-			// build the xml
+			// build the xml and write it to the file
 			try {
 				XFormsUtils mXForm = new XFormsUtils();
 				
 				// set debug output option
 				mXForm.setDebugOutput(sVerboseLog);
 				
-				String mXmlString = mXForm.buildXFormsData(mElements, INSTANCE_ID);
+				mXmlString = mXForm.buildXFormsData(mElements, INSTANCE_ID);
 				
-				// write the file
+				// build the file path
 				String mOutputPath = Environment.getExternalStorageDirectory().getPath();
 				mOutputPath += context.getString(R.string.system_file_path_odk_instances);
 				
 				// get the odk specific directory and file name
-				String mFileNamePart = context.getString(R.string.system_xforms_form_name);
-				mFileNamePart += "_" + OpenDataKitUtils.getInstanceFileName(mTimeStamp);
+				mFileName = context.getString(R.string.system_xforms_form_name);
+				mFileName += "_" + OpenDataKitUtils.getInstanceFileName(mTimeStamp);
 				
 				//finalise the output path
-				mOutputPath += File.separator + mFileNamePart;
+				if(mOutputPath.endsWith(File.separator) == false) {
+					mOutputPath += File.separator + mFileName + ".xml";
+				} else {
+					mOutputPath += mFileName + ".xml";
+				}
 				
-				String mFileName = FileUtils.writeNewFile(mXmlString, mFileNamePart + ".xml", mOutputPath);
+				// write the file
+				mResult = FileUtils.writeNewFile(mXmlString, mFileName, mOutputPath);
 				
 				// output some debug logging
 				if(sVerboseLog) {
-					Log.v(sLogTag, "new file written: '" + mFileName + "'");
+					Log.v(sLogTag, "new file written: '" + mResult + "'");
 				}
 			} catch (XFormsException e) {
 				Log.e(sLogTag, "an error occured while making the XForms XML", e);
 			} catch (IOException e) {
 				Log.e(sLogTag, "an error occrued while writing the XForms XML file", e);
+			}
+			
+			// write a compressed version of the data
+			if(mResult != null) {
+				try {
+					
+					// reset the result
+					mResult = null;
+					
+					// build the file path
+					String mOutputPath = Environment.getExternalStorageDirectory().getPath();
+					mOutputPath += context.getString(R.string.system_file_path_rhizome_data);
+					
+					//finalise the output path
+					if(mOutputPath.endsWith(File.separator) == false) {
+						mOutputPath += File.separator + mFileName + ".xml";
+					} else {
+						mOutputPath += mFileName + ".xml";
+					}
+					
+					// write the file
+					mResult = FileUtils.writeNewGzipFile(mXmlString, mFileName, mOutputPath);
+					
+					// output some debug logging
+					if(sVerboseLog) {
+						Log.v(sLogTag, "new gzip file written: '" + mResult + "'");
+					}
+				} catch (IOException e) {
+					Log.e(sLogTag, "an error occrued while writing the compressed form of the XForms XML file", e);
+				}
+			}
+			
+			// share the file via rhizome
+			if(mResult != null) {
+				
+				boolean mShareResult = false;
+				
+				try {
+					mShareResult = RhizomeUtils.shareFile(context, mResult);
+				} catch (IOException e) {
+					Log.e(sLogTag, "unable to share the file via rhizome");
+				}
+				
+				if(mShareResult == false) {
+					Toast.makeText(
+							context.getApplicationContext(), 
+							String.format(context.getString(R.string.instance_writer_rhizome_share_failed), mResult), 
+							Toast.LENGTH_LONG).show();
+				}
+				
 			}
 		} else {
 			Log.w(sLogTag, "unable to retrieve reading data");

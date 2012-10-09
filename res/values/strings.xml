@@ -75,6 +75,9 @@
     
     <string name="readings_ui_lbl_reading_time_default">Waiting for next reading&#8230;</string>
     
+    <!-- instance writer related strings -->
+    <string name="instance_writer_rhizome_share_failed">The attempt to share file via Rhizome\'$1%s\' failed. Check the error log for details.</string>
+    
     <!-- preferences related strings -->
     <string name="preferences_display_title">Display Preferences</string>
     <string name="preferences_sensor_readings_title">Sensor Reading Preferences</string>
@@ -156,6 +159,7 @@
     <!-- file system related strings -->
     <string name="system_file_path_parent">/magdaaproject/</string>
     <string name="system_file_path_debug_output">/magdaaproject/debug/</string>
+    <string name="system_file_path_rhizome_data">/magdaaproject/rhizome/mem/</string>
     <string name="system_file_path_odk_instances">/odk/instances/</string>
     
     <!-- system xform related strings -->
