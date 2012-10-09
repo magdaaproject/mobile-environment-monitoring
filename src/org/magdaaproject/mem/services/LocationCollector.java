@@ -29,20 +29,20 @@ import android.util.Log;
  * collect location information and store it for use by the CoreService class
  */
 public class LocationCollector implements LocationListener {
-	
+
 	/*
 	 * private class level constants
 	 */
 	private static final int sTwoMinutes = 1000 * 60 * 2;
-	
+
 	private static final boolean sVerboseLog = false;
 	private static final String sLogTag = "LocationCollector";
-	
+
 	/*
 	 * private class level variables
 	 */
 	private Location currentLocation = null;
-	
+
 
 	/*
 	 * (non-Javadoc)
@@ -50,16 +50,16 @@ public class LocationCollector implements LocationListener {
 	 */
 	@Override
 	public void onLocationChanged(Location location) {
-		
+
 		// output verbose debug log info
 		if(sVerboseLog) {
 			Log.v(sLogTag, "updated location received");
 		}
-		
+
 		// determine if the new location is better than the current location
 		if(isBetterLocation(location, currentLocation) == true) {
 			currentLocation = location;
-			
+
 			// output verbose debug log info
 			if(sVerboseLog) {
 				Log.v(sLogTag, "new location is better than existing location");
@@ -68,7 +68,7 @@ public class LocationCollector implements LocationListener {
 		}
 
 	}
-	
+
 	/**
 	 * get details of the current location
 	 * 
@@ -84,12 +84,12 @@ public class LocationCollector implements LocationListener {
 	 */
 	@Override
 	public void onProviderDisabled(String provider) {
-		
+
 		// output verbose debug log info
 		if(sVerboseLog) {
 			Log.v(sLogTag, "location provider has been disabled '" + provider + "'");
 		}
-		
+
 		// location provider has been disabled so reset the current location
 		currentLocation = null;
 
@@ -114,12 +114,12 @@ public class LocationCollector implements LocationListener {
 	 */
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		
+
 		// check to see if the provider has been disabled
 		if(status == LocationProvider.OUT_OF_SERVICE || status == LocationProvider.TEMPORARILY_UNAVAILABLE) {
 			// reset the current location
 			currentLocation = null;
-			
+
 			// output verbose debug log info
 			if(sVerboseLog) {
 				Log.v(sLogTag, "location provider is not available '" + provider + "'");
@@ -127,7 +127,7 @@ public class LocationCollector implements LocationListener {
 		}
 
 	}
-	
+
 	/*
 	 * the following two functions are derived from code released here:
 	 * http://developer.android.com/guide/topics/location/strategies.html
@@ -144,45 +144,45 @@ public class LocationCollector implements LocationListener {
 	 * @rturn true if the location is better than the current location
 	 */
 	protected boolean isBetterLocation(Location location, Location currentBestLocation) {
-	    if (currentBestLocation == null) {
-	        // A new location is always better than no location
-	        return true;
-	    }
+		if (currentBestLocation == null) {
+			// A new location is always better than no location
+			return true;
+		}
 
-	    // Check whether the new location fix is newer or older
-	    long timeDelta = location.getTime() - currentBestLocation.getTime();
-	    boolean isSignificantlyNewer = timeDelta > sTwoMinutes;
-	    boolean isSignificantlyOlder = timeDelta < -sTwoMinutes;
-	    boolean isNewer = timeDelta > 0;
+		// Check whether the new location fix is newer or older
+		long timeDelta = location.getTime() - currentBestLocation.getTime();
+		boolean isSignificantlyNewer = timeDelta > sTwoMinutes;
+		boolean isSignificantlyOlder = timeDelta < -sTwoMinutes;
+		boolean isNewer = timeDelta > 0;
 
-	    // If it's been more than two minutes since the current location, use the new location
-	    // because the user has likely moved
-	    if (isSignificantlyNewer) {
-	        return true;
-	    // If the new location is more than two minutes older, it must be worse
-	    } else if (isSignificantlyOlder) {
-	        return false;
-	    }
+		// If it's been more than two minutes since the current location, use the new location
+		// because the user has likely moved
+		if (isSignificantlyNewer) {
+			return true;
+			// If the new location is more than two minutes older, it must be worse
+		} else if (isSignificantlyOlder) {
+			return false;
+		}
 
-	    // Check whether the new location fix is more or less accurate
-	    int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
-	    boolean isLessAccurate = accuracyDelta > 0;
-	    boolean isMoreAccurate = accuracyDelta < 0;
-	    boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+		// Check whether the new location fix is more or less accurate
+		int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
+		boolean isLessAccurate = accuracyDelta > 0;
+		boolean isMoreAccurate = accuracyDelta < 0;
+		boolean isSignificantlyLessAccurate = accuracyDelta > 200;
 
-	    // Check if the old and new location are from the same provider
-	    boolean isFromSameProvider = isSameProvider(location.getProvider(),
-	            currentBestLocation.getProvider());
+		// Check if the old and new location are from the same provider
+		boolean isFromSameProvider = isSameProvider(location.getProvider(),
+				currentBestLocation.getProvider());
 
-	    // Determine location quality using a combination of timeliness and accuracy
-	    if (isMoreAccurate) {
-	        return true;
-	    } else if (isNewer && !isLessAccurate) {
-	        return true;
-	    } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
-	        return true;
-	    }
-	    return false;
+		// Determine location quality using a combination of timeliness and accuracy
+		if (isMoreAccurate) {
+			return true;
+		} else if (isNewer && !isLessAccurate) {
+			return true;
+		} else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -192,10 +192,10 @@ public class LocationCollector implements LocationListener {
 	 * @return true if the provider is the same
 	 */
 	private boolean isSameProvider(String provider1, String provider2) {
-	    if (provider1 == null) {
-	      return provider2 == null;
-	    }
-	    return provider1.equals(provider2);
+		if (provider1 == null) {
+			return provider2 == null;
+		}
+		return provider1.equals(provider2);
 	}
 
 }

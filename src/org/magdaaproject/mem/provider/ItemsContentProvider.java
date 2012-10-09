@@ -33,7 +33,7 @@ import android.util.Log;
  * a class which provides access to the sensor readings content
  */
 public class ItemsContentProvider extends ContentProvider {
-	
+
 	/*
 	 * public class level constants
 	 */
@@ -41,47 +41,47 @@ public class ItemsContentProvider extends ContentProvider {
 	 * authority string for the content provider
 	 */
 	public static final String AUTHORITY = "org.magdaaproject.mem.provider.items";
-	
+
 	/*
 	 * private class level constants
 	 */
 	private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-	
+
 	private static final int sReadingsListUri = 0;
 	private static final int sReadingsItemUri = 1;
-	
+
 	private static final String sTag = "ItemsContentProvider";
-	
+
 	/*
 	 * private class level variables
 	 */
 	private MainDatabaseHelper databaseHelper;
 	private SQLiteDatabase database;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.content.ContentProvider#onCreate()
 	 */
 	@Override
 	public boolean onCreate() {
-		
+
 		//define which URIs to match
 		sUriMatcher.addURI(AUTHORITY, ReadingsContract.CONTENT_URI_PATH, sReadingsListUri);
 		sUriMatcher.addURI(AUTHORITY, ReadingsContract.CONTENT_URI_PATH + "/#", sReadingsItemUri);
-		
+
 		// create the database if necessary
 		databaseHelper = new MainDatabaseHelper(getContext());
-		
+
 		return false;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.content.ContentProvider#query(android.net.Uri, java.lang.String[], java.lang.String, java.lang.String[], java.lang.String)
 	 */
 	@Override
 	public synchronized Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		
+
 		// choose the uri and table name to match against
 		switch(sUriMatcher.match(uri)) {
 		case sReadingsListUri:
@@ -103,26 +103,26 @@ public class ItemsContentProvider extends ContentProvider {
 			Log.e(sTag, "unknown URI detected on query: " + uri.toString());
 			throw new IllegalArgumentException("unknwon URI detected");
 		}
-		
+
 		// get a connection to the database
 		database = databaseHelper.getReadableDatabase();
 
 		// return the results of the query
 		return database.query(ReadingsContract.Table.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.content.ContentProvider#insert(android.net.Uri, android.content.ContentValues)
 	 */
 	@Override
 	public synchronized Uri insert(Uri uri, ContentValues values) {
-		
+
 		// define helper variables
 		Uri mResultUri = null;
 		String mTable = null;
 		Uri mContentUri = null;
-		
+
 		// identify the appropriate uri
 		switch(sUriMatcher.match(uri)) {
 		case sReadingsListUri:
@@ -134,7 +134,7 @@ public class ItemsContentProvider extends ContentProvider {
 			Log.e(sTag, "unknown URI detected on insert: " + uri.toString());
 			throw new IllegalArgumentException("unknwon URI detected");
 		}
-		
+
 		// get a connection to the database
 		database = databaseHelper.getWritableDatabase();
 
@@ -144,20 +144,20 @@ public class ItemsContentProvider extends ContentProvider {
 		database.close();
 
 		mResultUri = ContentUris.withAppendedId(mContentUri, mId);
-		
+
 		//notify any component interested about this change
 		getContext().getContentResolver().notifyChange(mResultUri, null);
-		
+
 		return mResultUri;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.content.ContentProvider#delete(android.net.Uri, java.lang.String, java.lang.String[])
 	 */
 	@Override
 	public synchronized int delete(Uri uri, String selection, String[] selectionArgs) {
-		
+
 		// get a connection to the database
 		database = databaseHelper.getWritableDatabase();
 		int mCount;
@@ -192,7 +192,7 @@ public class ItemsContentProvider extends ContentProvider {
 	 */
 	@Override
 	public synchronized String getType(Uri uri) {
-		
+
 		// choose the mime type
 		switch(sUriMatcher.match(uri)) {
 		case sReadingsListUri:
@@ -214,5 +214,5 @@ public class ItemsContentProvider extends ContentProvider {
 	public synchronized int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		throw new UnsupportedOperationException("Method not implemented");
 	}
-	
+
 }

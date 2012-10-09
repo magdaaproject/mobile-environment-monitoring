@@ -43,36 +43,36 @@ import android.widget.Toast;
  *
  */
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
-	
+
 	/*
 	 * private class level constants
 	 */
 	private static final boolean sVerboseLog = true;
 	private static final String sTag = "SettingsActivity";
-	
+
 	private static final String sLocationInfoGps = "preferences_collection_location_gps";
 	private static final String sLocationInfoManual = "preferences_collection_location_manual";
-	
+
 	private static final String sManualLatitude = "preferences_collection_location_manual_lat";
 	private static final String sManualLongitude = "preferences_collection_location_manual_lng";
-	
+
 	private static final int sMissingCoordsDialog = 0;
 	private static final int sGpsNotEnabledDialog = 1;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.preference.PreferenceActivity#onCreate(android.os.Bundle)
 	 */
 	@SuppressWarnings("deprecation")
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
-        
-        // listen for changes to the preferences
-        SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        mPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		addPreferencesFromResource(R.xml.preferences);
+
+		// listen for changes to the preferences
+		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		mPreferences.registerOnSharedPreferenceChangeListener(this);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -81,92 +81,92 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		
+
 		// TODO use this to update the summary of the list items
-		
+
 		// output verbose debug log info
 		if(sVerboseLog) {
 			Log.v(sTag, "preference key: '" + key + "'");
 		}
-		
+
 		/*
 		 *  ensure the appropriate coordinate checkbox is ticked
 		 */
 		if(key.equals(sLocationInfoGps)) {
-			
+
 			Boolean mValue = sharedPreferences.getBoolean(key, false);
-			
+
 			// uncheck the manual location check box
 			SharedPreferences.Editor mEditor = sharedPreferences.edit();
 			mEditor.putBoolean(sLocationInfoManual, !mValue);
 			mEditor.apply();
-			
+
 			CheckBoxPreference mPreference = (CheckBoxPreference) findPreference(sLocationInfoManual);
 			mPreference.setChecked(!mValue);
-			
+
 		}
-		
+
 		if(key.equals(sLocationInfoManual)) {
-			
+
 			Boolean mValue = sharedPreferences.getBoolean(key, false);
-			
+
 			// uncheck the gps location check box
 			SharedPreferences.Editor mEditor = sharedPreferences.edit();
 			mEditor.putBoolean(sLocationInfoGps, !mValue);
 			mEditor.apply();
-			
+
 			CheckBoxPreference mPreference = (CheckBoxPreference) findPreference(sLocationInfoGps);
 			mPreference.setChecked(!mValue);
 		}
-		
+
 		/*
 		 * ensure the manual coordinates are valid
 		 */
 		if(key.equals(sManualLatitude)) {
-			
+
 			String mValue = sharedPreferences.getString(sManualLatitude, null);
-			
+
 			if(mValue != null && mValue.equals("") == false) {
 				if(GeoCoordUtils.isValidLatitude(Float.parseFloat(mValue)) == false) {
-					
+
 					// remove the erroneous data
 					SharedPreferences.Editor mEditor = sharedPreferences.edit();
 					mEditor.putString(sManualLatitude, null);
 					mEditor.apply();
-					
+
 					EditTextPreference mPreference = (EditTextPreference) findPreference(sManualLatitude);
 					mPreference.setText("");
-					
+
 					// show a toast
 					Toast.makeText(getApplicationContext(), R.string.preferences_collection_location_manual_invalid, Toast.LENGTH_LONG).show();
-					
+
 				}
 			}
 		}
-		
+
 		if(key.equals(sManualLongitude)) {
-			
+
 			String mValue = sharedPreferences.getString(sManualLongitude, null);
-			
+
 			if(mValue != null) {
 				if(GeoCoordUtils.isValidLongitude(Float.parseFloat(mValue)) == false) {
-					
+
 					// remove the erroneous data
 					SharedPreferences.Editor mEditor = sharedPreferences.edit();
 					mEditor.putString(sManualLongitude, null);
 					mEditor.apply();
-					
+
 					EditTextPreference mPreference = (EditTextPreference) findPreference(sManualLongitude);
 					mPreference.setText("");
-					
+
 					// show a toast
 					Toast.makeText(getApplicationContext(), R.string.preferences_collection_location_manual_invalid, Toast.LENGTH_LONG).show();
-					
+
 				}
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
@@ -174,17 +174,17 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	@SuppressWarnings("deprecation")
 	public void onBackPressed(){
-		
+
 		// validate some settings
 		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		
+
 		// validate the manual location information if required
 		if(mPreferences.getBoolean(sLocationInfoManual, false)) {
 			// manual location is enabled
-			
+
 			String mLatitude = mPreferences.getString(sManualLatitude, null);
 			String mLongitude = mPreferences.getString(sManualLongitude, null);
-			
+
 			if(mLatitude == null || mLongitude == null) {
 				// show an error dialog
 				showDialog(sMissingCoordsDialog);
@@ -194,34 +194,34 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			}
 		} else if(mPreferences.getBoolean(sLocationInfoGps, false)) {
 			// gps location information is enabled
-			
+
 			// output verbose debug log info
 			if(sVerboseLog) {
 				Log.v(sTag, "gps location information is enabled");
 			}
-			
+
 			LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-			
+
 			boolean mEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-			
+
 			if(mEnabled == false) {
-				
+
 				if(sVerboseLog) {
 					Log.v(sTag, "gps location service is not enabled");
 				}
-				
+
 				showDialog(sGpsNotEnabledDialog);
 			} else {
 				// finish as normal
 				finish();
 			}
 		} else {
-			
+
 			// finish as normal
 			finish();
 		}
 	}
-	
+
 	/*
 	 * callback method used to construct the required dialog
 	 * (non-Javadoc)
@@ -232,7 +232,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	protected Dialog onCreateDialog(int id) {
 
 		AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-		
+
 		// determine which dialog to show
 		switch(id) {
 		case sMissingCoordsDialog:

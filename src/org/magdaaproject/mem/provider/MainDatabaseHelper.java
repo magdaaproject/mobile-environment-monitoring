@@ -55,7 +55,7 @@ public class MainDatabaseHelper extends SQLiteOpenHelper {
 			ReadingsContract.Table.LONGITUDE + " REAL, " + 
 			ReadingsContract.Table.ALTITUDE + " REAL, " +
 			ReadingsContract.Table.GPS_ACCURACY + " REAL)";
-	
+
 	private static final String sReadingsIndexCreate = "CREATE INDEX readings_timestamp_index ON " +
 			ReadingsContract.Table.TABLE_NAME + "( " +
 			ReadingsContract.Table.TIMESTAMP  + " DESC)";
@@ -76,7 +76,7 @@ public class MainDatabaseHelper extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		
+
 		// create the table and index
 		db.execSQL(sReadingsTableCreate);
 		db.execSQL(sReadingsIndexCreate);

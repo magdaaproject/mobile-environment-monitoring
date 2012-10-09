@@ -20,7 +20,6 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.utils.FileUtils;
-import org.magdaaproject.utils.serval.ServalUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -44,12 +43,12 @@ import android.widget.TextView;
  *
  */
 public class LauncherActivity extends Activity implements OnClickListener {
-	
+
 	/*
 	 * private class level constants
 	 */
 	private static final String sTag = "LauncherActivity";
-	
+
 	private static final int sNoExternalStorage = 0;
 	private static final int sNoServalMesh = 1;
 
@@ -57,74 +56,70 @@ public class LauncherActivity extends Activity implements OnClickListener {
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
-    @SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation")
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launcher);
-        
-        // populate the activity with the required text
-        TextView mTextView = (TextView) findViewById(R.id.launcher_ui_lbl_about);
-        
-        CharSequence mStartText = getText(R.string.launcher_ui_lbl_about_start);
-        
-        // build the bullet steps
-        SpannableString mStep01 = new SpannableString(getString(R.string.launcher_ui_lbl_step_01));
-        mStep01.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep01.length(), 0);
-        
-        SpannableString mStep02 = new SpannableString(getString(R.string.launcher_ui_lbl_step_02));
-        mStep02.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep02.length(), 0);
-        
-        SpannableString mStep03 = new SpannableString(getString(R.string.launcher_ui_lbl_step_03));
-        mStep03.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep03.length(), 0);
-        
-        SpannableString mStep04 = new SpannableString(getString(R.string.launcher_ui_lbl_step_04));
-        mStep04.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep04.length(), 0);
-        
-        CharSequence mFinishText = getText(R.string.launcher_ui_lbl_about_finish);
-        
-        // finalise the string and display it
-        mTextView.setText(TextUtils.concat(mStartText, mStep01, mStep02, mStep03, mStep04, mFinishText));
-        
-        boolean mAllowStart = true;
-        
-        // check on external storage
-        if(FileUtils.isExternalStorageAvailable() == false) {
-        	mAllowStart = false;
-        	showDialog(sNoExternalStorage);
-        }
-        
-        // check that Serval Mesh is installed
-//        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
-//        	mAllowStart = false;
-//        	showDialog(sNoServalMesh);
-//        }
-        
-        //setup the buttons
-        Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
-        mButton.setOnClickListener(this);
-        
-        mButton = (Button) findViewById(R.id.launcher_ui_btn_start);
-        mButton.setOnClickListener(this);
-        mButton.setEnabled(mAllowStart);
-        
-        mButton = (Button) findViewById(R.id.launcher_ui_btn_contact);
-        mButton.setOnClickListener(this);
-        
-        // start the service for debugging
-//        Intent mIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
-//        startService(mIntent);
-    }
-    
-    /*
-     * (non-Javadoc)
-     * @see android.view.View.OnClickListener#onClick(android.view.View)
-     */
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_launcher);
+
+		// populate the activity with the required text
+		TextView mTextView = (TextView) findViewById(R.id.launcher_ui_lbl_about);
+
+		CharSequence mStartText = getText(R.string.launcher_ui_lbl_about_start);
+
+		// build the bullet steps
+		SpannableString mStep01 = new SpannableString(getString(R.string.launcher_ui_lbl_step_01));
+		mStep01.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep01.length(), 0);
+
+		SpannableString mStep02 = new SpannableString(getString(R.string.launcher_ui_lbl_step_02));
+		mStep02.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep02.length(), 0);
+
+		SpannableString mStep03 = new SpannableString(getString(R.string.launcher_ui_lbl_step_03));
+		mStep03.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep03.length(), 0);
+
+		SpannableString mStep04 = new SpannableString(getString(R.string.launcher_ui_lbl_step_04));
+		mStep04.setSpan(new BulletSpan(Integer.parseInt(getText(R.string.ui_elem_bullet_span).toString())), 0, mStep04.length(), 0);
+
+		CharSequence mFinishText = getText(R.string.launcher_ui_lbl_about_finish);
+
+		// finalise the string and display it
+		mTextView.setText(TextUtils.concat(mStartText, mStep01, mStep02, mStep03, mStep04, mFinishText));
+
+		boolean mAllowStart = true;
+
+		// check on external storage
+		if(FileUtils.isExternalStorageAvailable() == false) {
+			mAllowStart = false;
+			showDialog(sNoExternalStorage);
+		}
+
+		// check that Serval Mesh is installed
+		//        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
+		//        	mAllowStart = false;
+		//        	showDialog(sNoServalMesh);
+		//        }
+
+		//setup the buttons
+		Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
+		mButton.setOnClickListener(this);
+
+		mButton = (Button) findViewById(R.id.launcher_ui_btn_start);
+		mButton.setOnClickListener(this);
+		mButton.setEnabled(mAllowStart);
+
+		mButton = (Button) findViewById(R.id.launcher_ui_btn_contact);
+		mButton.setOnClickListener(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see android.view.View.OnClickListener#onClick(android.view.View)
+	 */
 	@Override
 	public void onClick(View view) {
-		
+
 		Intent mIntent;
-		
+
 		// determine which button was touched
 		switch(view.getId()){
 		case R.id.launcher_ui_btn_settings:
@@ -143,9 +138,9 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		default:
 			Log.w(sTag, "an unknown view fired an onClick event");
 		}
-		
+
 	}
-	
+
 	/*
 	 * callback method used to construct the required dialog
 	 * (non-Javadoc)
@@ -156,7 +151,7 @@ public class LauncherActivity extends Activity implements OnClickListener {
 	protected Dialog onCreateDialog(int id) {
 
 		AlertDialog.Builder mBuilder = new AlertDialog.Builder(this);
-		
+
 		// determine which dialog to show
 		switch(id) {
 		case sNoExternalStorage:
@@ -181,18 +176,18 @@ public class LauncherActivity extends Activity implements OnClickListener {
 			return super.onCreateDialog(id);
 		}
 	}
-	
+
 	/*
 	 * method to start the send an email process so that the user can contact us
 	 */
 	private void contactUs() {
-		
+
 		// send an email to us
 		Intent mIntent = new Intent(Intent.ACTION_SEND);
 		mIntent.setType("plain/text");
 		mIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{getString(R.string.system_contact_email)});
 		mIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.system_contact_email_subject));
-		
+
 		startActivity(Intent.createChooser(mIntent, getString(R.string.system_contact_email_chooser)));
 	}
 }

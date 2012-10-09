@@ -34,7 +34,7 @@ import android.provider.BaseColumns;
  * defines the contract for accessing readings information via the content provider
  */
 public class ReadingsContract {
-	
+
 	/*
 	 * public class level variables
 	 */
@@ -57,57 +57,57 @@ public class ReadingsContract {
 	 * content type for an individual item
 	 */
 	public static final String CONTENT_TYPE_ITEM = "vnd.android.cursor.item/vnd." + ItemsContentProvider.AUTHORITY + "." + CONTENT_URI_PATH;
-	
+
 	/**
 	 * table definition
 	 */
 	public static final class Table implements BaseColumns {
-		
+
 		/**
 		 * name of the database table
 		 */
 		public static final String TABLE_NAME = ReadingsContract.CONTENT_URI_PATH;
-		
+
 		/**
 		 * unique id column
 		 */
 		public static final String _ID = BaseColumns._ID;
-		
+
 		/**
 		 * timestamp of when the information was saved
 		 */
 		public static final String TIMESTAMP = "timestamp";
-		
+
 		/**
 		 * temperature in ¼C 
 		 */
 		public static final String TEMPERATURE = "temperature";
-		
+
 		/**
 		 * relative humidity
 		 */
 		public static final String HUMIDITY = "humidity";
-		
+
 		/**
 		 * latitude GPS coordinate
 		 */
 		public static final String LATITUDE = "latitude";
-		
+
 		/**
 		 * longitude GPS coordinate
 		 */
 		public static final String LONGITUDE = "longitude";
-		
+
 		/**
 		 * altitude GPS coordinate
 		 */
 		public static final String ALTITUDE = "altitude";
-		
+
 		/**
 		 * GPS accuracy
 		 */
 		public static final String GPS_ACCURACY = "accuracy";
-		
+
 		/**
 		 * an array containing all of the columns
 		 */
