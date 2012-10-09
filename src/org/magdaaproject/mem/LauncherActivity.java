@@ -20,6 +20,7 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.utils.FileUtils;
+import org.magdaaproject.utils.serval.ServalUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -94,10 +95,10 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		}
 
 		// check that Serval Mesh is installed
-		//        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
-		//        	mAllowStart = false;
-		//        	showDialog(sNoServalMesh);
-		//        }
+        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
+        	mAllowStart = false;
+        	showDialog(sNoServalMesh);
+        }
 
 		//setup the buttons
 		Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
