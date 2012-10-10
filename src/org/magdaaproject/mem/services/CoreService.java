@@ -61,7 +61,7 @@ public class CoreService extends IOIOService {
 	 * private class level constants
 	 */
 	// logging variables
-	private static final boolean sVerboseLog = true;
+	private static final boolean sVerboseLog = false;
 	private static final String sLogTag = "CoreService";
 
 	// pins to listen on for input
