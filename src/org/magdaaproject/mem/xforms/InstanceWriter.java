@@ -141,10 +141,16 @@ public class InstanceWriter extends BroadcastReceiver {
 				
 				//finalise the output path
 				if(mOutputPath.endsWith(File.separator) == false) {
-					mOutputPath += File.separator + mFileName + ".xml";
+					mOutputPath += File.separator + mFileName;
 				} else {
-					mOutputPath += mFileName + ".xml";
+					mOutputPath += mFileName;
 				}
+				
+				// finalise the file name
+				mFileName += ".xml";
+				
+				//debug code
+				Log.v(sLogTag, "file name: " + mFileName);
 				
 				// write the file
 				mResult = FileUtils.writeNewFile(mXmlString, mFileName, mOutputPath);
@@ -172,9 +178,7 @@ public class InstanceWriter extends BroadcastReceiver {
 					
 					//finalise the output path
 					if(mOutputPath.endsWith(File.separator) == false) {
-						mOutputPath += File.separator + mFileName + ".xml";
-					} else {
-						mOutputPath += mFileName + ".xml";
+						mOutputPath += File.separator;
 					}
 					
 					// write the file
