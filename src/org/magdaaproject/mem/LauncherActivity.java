@@ -156,8 +156,9 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		// determine which dialog to show
 		switch(id) {
 		case sNoExternalStorage:
-			mBuilder.setMessage(R.string.launcher_ui_dialog_no_external_storage)
+			mBuilder.setMessage(R.string.launcher_ui_dialog_no_external_storage_message)
 			.setCancelable(false)
+			.setTitle(R.string.launcher_ui_dialog_no_external_storage_title)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
@@ -165,8 +166,9 @@ public class LauncherActivity extends Activity implements OnClickListener {
 			});
 			return mBuilder.create();
 		case sNoServalMesh:
-			mBuilder.setMessage(R.string.launcher_ui_dialog_no_serval_mesh)
+			mBuilder.setMessage(R.string.launcher_ui_dialog_no_serval_mesh_message)
 			.setCancelable(false)
+			.setTitle(R.string.launcher_ui_dialog_no_serval_mesh_title)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();

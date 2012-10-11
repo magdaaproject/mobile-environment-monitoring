@@ -40,8 +40,11 @@
     <string name="launcher_ui_btn_start">Start</string>
     <string name="launcher_ui_btn_contact">Contact</string>
     
-    <string name="launcher_ui_dialog_no_external_storage">External storage, such as an SD Card, must be enabled before using this application</string>
-    <string name="launcher_ui_dialog_no_serval_mesh">The Serval Mesh software is not installed, please install it before using this application</string>
+    <string name="launcher_ui_dialog_no_external_storage_message">External storage, such as an SD Card, must be enabled before using this application</string>
+    <string name="launcher_ui_dialog_no_external_storage_title">External Storage</string>
+    
+    <string name="launcher_ui_dialog_no_serval_mesh_message">The Serval Mesh software is not installed, please install it before using this application</string>
+    <string name="launcher_ui_dialog_no_serval_mesh_title">Serval Mesh</string>
     
     <!-- readings activity screen -->
     <string name="readings_ui_lbl_header">Sensor Readings</string>
@@ -119,8 +122,11 @@
     
     <string name="preferences_collection_location_manual_invalid">The geocoordinate was invalid and has not been saved</string>
     
-    <string name="preferences_dialog_invalid_manual_location_coords">The manual Geocoordinates are invalid, please adjust the values before continuing</string>
-    <string name="preferences_dialog_invalid_gps_status">GPS Location Services must be enabled to use GPS locations. Enable GPS Location Services now?</string>
+    <string name="preferences_dialog_invalid_manual_location_coords_message">The manual Geocoordinates are invalid, please adjust the values before continuing</string>
+    <string name="preferences_dialog_invalid_manual_location_coords_title">Invalid Geocoordinates</string>
+    
+    <string name="preferences_dialog_invalid_gps_status_message">GPS Location Services must be enabled to use GPS locations. Enable GPS Location Services now?</string>
+    <string name="preferences_dialog_invalid_gps_status_title">GPS Location Services</string>
     
     <!-- notification related strings -->
     <string name="system_notification_ticker_text">MaGDAA MEM recording has started</string>

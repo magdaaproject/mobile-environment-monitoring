@@ -236,8 +236,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		// determine which dialog to show
 		switch(id) {
 		case sMissingCoordsDialog:
-			mBuilder.setMessage(R.string.preferences_dialog_invalid_manual_location_coords)
+			mBuilder.setMessage(R.string.preferences_dialog_invalid_manual_location_coords_message)
 			.setCancelable(false)
+			.setTitle(R.string.preferences_dialog_invalid_manual_location_coords_title)
 			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
@@ -245,8 +246,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			});
 			return mBuilder.create();
 		case sGpsNotEnabledDialog:
-			mBuilder.setMessage(R.string.preferences_dialog_invalid_gps_status)
+			mBuilder.setMessage(R.string.preferences_dialog_invalid_gps_status_message)
 			.setCancelable(false)
+			.setTitle(R.string.preferences_dialog_invalid_gps_status_title)
 			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					Intent mIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
