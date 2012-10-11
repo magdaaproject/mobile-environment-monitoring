@@ -115,6 +115,8 @@ public class InstanceWriter extends BroadcastReceiver {
 			// store the timestamp
 			Long mTimeStamp = mCursor.getLong(mCursor.getColumnIndex(ReadingsContract.Table.TIMESTAMP));
 			
+			mElements.put("Timestamp", XFormsUtils.formatTimestamp(mTimeStamp));
+			
 			// play nice and tidy up
 			mCursor.close();
 			
