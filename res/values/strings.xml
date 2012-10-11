@@ -25,7 +25,7 @@
     
     <!-- application wide strings -->
     <string name="system_application_name">MaGDAA - MEM</string>
-    <string name="system_application_default_label">MaGDAA Project</string>
+    <string name="system_application_default_label">MaGDAA - MEM</string>
     
     <!-- launcher activity screen -->
     <string name="launcher_ui_lbl_header">Mobile Environment Monitoring</string>
