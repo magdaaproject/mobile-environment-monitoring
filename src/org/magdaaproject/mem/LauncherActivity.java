@@ -52,12 +52,16 @@ public class LauncherActivity extends Activity implements OnClickListener {
 
 	private static final int sNoExternalStorage = 0;
 	private static final int sNoServalMesh = 1;
+	
+	/*
+	 * private class level variables
+	 */
+	private Button startButton;
 
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,6 +90,36 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		// finalise the string and display it
 		mTextView.setText(TextUtils.concat(mStartText, mStep01, mStep02, mStep03, mStep04, mFinishText));
 
+		//setup the buttons
+		Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
+		mButton.setOnClickListener(this);
+
+		startButton = (Button) findViewById(R.id.launcher_ui_btn_start);
+		startButton.setOnClickListener(this);
+
+		mButton = (Button) findViewById(R.id.launcher_ui_btn_contact);
+		mButton.setOnClickListener(this);
+		
+		// enable the start button if appropriate
+		enableStartButton();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		// enable the start button if appropriate
+		enableStartButton();
+	}
+	
+	
+	@SuppressWarnings("deprecation")
+	private void enableStartButton() {
+		
 		boolean mAllowStart = true;
 
 		// check on external storage
@@ -99,17 +133,8 @@ public class LauncherActivity extends Activity implements OnClickListener {
         	mAllowStart = false;
         	showDialog(sNoServalMesh);
         }
-
-		//setup the buttons
-		Button mButton = (Button) findViewById(R.id.launcher_ui_btn_settings);
-		mButton.setOnClickListener(this);
-
-		mButton = (Button) findViewById(R.id.launcher_ui_btn_start);
-		mButton.setOnClickListener(this);
-		mButton.setEnabled(mAllowStart);
-
-		mButton = (Button) findViewById(R.id.launcher_ui_btn_contact);
-		mButton.setOnClickListener(this);
+        
+        startButton.setEnabled(mAllowStart);
 	}
 
 	/*
