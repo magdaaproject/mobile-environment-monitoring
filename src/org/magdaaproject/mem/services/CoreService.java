@@ -32,9 +32,11 @@ import org.magdaaproject.utils.readings.TempHumidityReading;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.SQLException;
 import android.location.Location;
@@ -79,7 +81,7 @@ public class CoreService extends IOIOService {
 	 */
 	private ReadingsList listOfReadings;
 	private long readingInterval;
-	private long nextReadingTime = System.currentTimeMillis() + readingInterval;
+	private volatile long nextReadingTime = System.currentTimeMillis() + readingInterval;
 
 	private boolean collectLocationInfo = false;
 	private boolean collectGpsLocationInfo = false;
@@ -95,6 +97,8 @@ public class CoreService extends IOIOService {
 	private String sensorStatusIntentAction = null;
 
 	private DecimalFormat decimalFormat;
+	
+	private boolean currentSensorStatus = false;
 
 	/*
 	 * (non-Javadoc)
@@ -205,6 +209,11 @@ public class CoreService extends IOIOService {
 
 		// add the notification 
 		addNotification();
+		
+		// register the sensor status receiver
+		IntentFilter mIntentFilter = new IntentFilter();
+		mIntentFilter.addAction(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
+		registerReceiver(sensorStatusEnquiryReceiver, mIntentFilter);
 
 		// return the start sticky flag
 		return android.app.Service.START_STICKY;
@@ -270,6 +279,12 @@ public class CoreService extends IOIOService {
 				locationManager.removeUpdates(locationCollector);
 			}
 		}
+		
+		try {
+			unregisterReceiver(sensorStatusEnquiryReceiver);
+		} catch (IllegalArgumentException e) {
+			Log.w(sLogTag, "IllegalArgumentException thrown when unregistering receivers");
+		}
 	}
 
 	/*
@@ -280,6 +295,45 @@ public class CoreService extends IOIOService {
 	public IBinder onBind(Intent arg0) {
 		// return null as we don't expect anyone will bind to this service
 		return null;
+	}
+	
+	/*
+	 * a broadcast receiver which responds to a sensor status inquiry
+	 */
+	private BroadcastReceiver sensorStatusEnquiryReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			// check to ensure the intent is correct
+			if(intent.getAction().equals(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action))) {
+				// send a sensor status broadcast in reply
+				sendSensorStatusBroadcast();
+			}
+		}
+	};
+	
+	/*
+	 * send a sensor broadcast using the last known sensor status
+	 */
+	private void sendSensorStatusBroadcast() {
+		
+		// send a broadcast intent
+		Intent mIntent = new Intent();
+		mIntent.setAction(sensorStatusIntentAction);
+		mIntent.putExtra("connected", currentSensorStatus);
+
+		sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
+	}
+	
+	/*
+	 * send a sensor broadcast using an updated sensor status
+	 */
+	private void sendSensorStatusBroadcast(boolean newStatus) {
+		
+		currentSensorStatus = newStatus;
+		
+		sendSensorStatusBroadcast();
 	}
 
 	/*
@@ -310,18 +364,13 @@ public class CoreService extends IOIOService {
 				tempInput = ioio_.openAnalogInput(sTempInputPin);
 				humidityInput = ioio_.openAnalogInput(sHumidityInputPin);
 
-				// send a broadcast intent
-				Intent mIntent = new Intent();
-				mIntent.setAction(sensorStatusIntentAction);
-				mIntent.putExtra("connected", true);
-
-				sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
+				// send the sensor status broadcast
+				sendSensorStatusBroadcast(true);
+				
 			} catch (ConnectionLostException e) {
 
-				// send a broadcast intent
-				Intent mIntent = new Intent();
-				mIntent.setAction(sensorStatusIntentAction);
-				mIntent.putExtra("connected", false);
+				// send the sensor status broadcast
+				sendSensorStatusBroadcast(false);
 
 				Log.e(sLogTag, "connection to ioio lost during setup", e);
 				throw e;
@@ -443,13 +492,8 @@ public class CoreService extends IOIOService {
 		 */
 		@Override
 		public void disconnected() {
-
-			// send a broadcast intent
-			Intent mIntent = new Intent();
-			mIntent.setAction(sensorStatusIntentAction);
-			mIntent.putExtra("connected", false);
-
-			sendBroadcast(mIntent, "org.magdaaproject.mem.SENSOR_STATUS");
+			// send the sensor status broadcast
+			sendSensorStatusBroadcast(false);
 		}
 	}
 

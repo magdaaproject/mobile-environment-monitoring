@@ -222,12 +222,12 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	@Override
 	public void onResume() {
+		
+		// register the receivers
+		registerReceivers();
 
 		// reset the UI
 		resetUI();
-
-		// register the receivers
-		registerReceivers();
 
 		super.onResume();
 	}
@@ -256,6 +256,10 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 
 		// reset the time ui component
 		readingTimeView.setText(R.string.readings_ui_lbl_reading_time_default);
+		
+		//send off an intent to inquire about the status of the sensor
+		Intent mIntent = new Intent(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
+		sendBroadcast(mIntent);
 	}
 
 
@@ -297,6 +301,10 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		// send off an intent to poll for the current state of the serval mesh
 		Intent mIntent = new Intent(ServalStatusReceiver.SERVAL_STATE_CHECK_ACTION);
 		startService(mIntent);
+		
+		//send off an intent to inquire about the status of the sensor
+		mIntent = new Intent(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
+		sendBroadcast(mIntent);
 	}
 
 	/*
@@ -361,9 +369,24 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		 */
 		private String[] projection = null; 
 		private ContentResolver contentResolver = null;
+		
+		private volatile String lastRecordId = "";
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			
+			// get the URI from the intent
+			Uri mNewRecord = intent.getData();
+			
+			// filter out multiple calls with the same id
+			// workaround, no idea what is causing the issue
+			if(lastRecordId.equals(mNewRecord.getLastPathSegment())) {
+				// return, no need to continue
+				return;
+			}
+			
+			// store this record id to filter out duplicate calls
+			lastRecordId = mNewRecord.getLastPathSegment();
 
 			// output verbose debug log info
 			if(sVerboseLog) {
@@ -383,9 +406,6 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 			if(contentResolver == null) {
 				contentResolver = context.getContentResolver();
 			}
-
-			// get the URI from the intent
-			Uri mNewRecord = intent.getData();
 
 			// get the data
 			Cursor mCursor = contentResolver.query(

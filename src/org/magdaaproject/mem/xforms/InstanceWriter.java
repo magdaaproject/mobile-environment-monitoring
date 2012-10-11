@@ -57,6 +57,8 @@ public class InstanceWriter extends BroadcastReceiver {
 	 */
 	private static final boolean sVerboseLog = true;
 	private static final String sLogTag = "InstanceWriter";
+	
+	private static volatile String lastRecordId = "";
 
 	/*
 	 * (non-Javadoc)
@@ -72,6 +74,19 @@ public class InstanceWriter extends BroadcastReceiver {
 			return;
 		}
 		
+		// get the URI from the intent
+		Uri mNewRecord = intent.getData();
+		
+		// filter out multiple calls with the same id
+		// workaround, no idea what is causing the issue
+		if(lastRecordId.equals(mNewRecord.getLastPathSegment())) {
+			// return, no need to continue
+			return;
+		}
+		
+		// store this record id to filter out duplicate calls
+		lastRecordId = mNewRecord.getLastPathSegment();
+		
 		// output verbose debug log info
 		if(sVerboseLog) {
 			Log.v(sLogTag, "InstanceWriter called");
@@ -80,9 +95,6 @@ public class InstanceWriter extends BroadcastReceiver {
 
 		// get a content resolver
 		ContentResolver mContentResolver = context.getContentResolver();
-
-		// get the URI from the intent
-		Uri mNewRecord = intent.getData();
 
 		// get the data
 		Cursor mCursor = mContentResolver.query(

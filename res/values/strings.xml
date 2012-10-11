@@ -142,6 +142,7 @@
     <!-- broadcast related string -->
     <string name="system_broadcast_intent_new_reading_action">org.magdaaproject.mem.NEW_READING</string>
     <string name="system_broadcast_intent_sensor_status_action">org.magdaaproject.mem.SENSOR_STATUS</string>
+    <string name="system_broadcast_intent_sensor_status_inquiry_action">org.magdaaproject.mem.SENSOR_STATUS_INQUIRY</string>
 
     <string name="system_broadcast_intent_sensor_reading_permission_label">MaGDAA MEM New Reading</string>
     <string name="system_broadcast_intent_sensor_reading_permission_description">Receive Notification of MaGDAA MEM New Reading</string>
