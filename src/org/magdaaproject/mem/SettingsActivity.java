@@ -31,6 +31,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -58,6 +59,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 	private static final int sMissingCoordsDialog = 0;
 	private static final int sGpsNotEnabledDialog = 1;
+	private static final int sInvalidTempValueDialog = 2;
+	
+	private static final String sTemperatureUnits = "preferences_display_temperature";
+	private static final String sMaxColdTemp = "preferences_display_max_cold_temp";
+	private static final String sMinHotTemp = "preferences_display_min_hot_temp";
+	private static final String sCollectionInterval = "preferences_collection_interval";
 
 	/*
 	 * (non-Javadoc)
@@ -72,6 +79,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		// listen for changes to the preferences
 		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		mPreferences.registerOnSharedPreferenceChangeListener(this);
+		
+		// adjust the description of the list preferences
+		adjustTemperatureDisplaySummary(mPreferences);
+		adjustMaxColdTempSummary(mPreferences);
+		adjustMinHotTempSummary(mPreferences);
+		adjustCollectionIntervalSummary(mPreferences);
 	}
 
 	/*
@@ -82,11 +95,32 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-		// TODO use this to update the summary of the list items
-
 		// output verbose debug log info
 		if(sVerboseLog) {
 			Log.v(sTag, "preference key: '" + key + "'");
+		}
+		
+		/*
+		 * adjust the summaries of some of the preferences
+		 */
+		if(key.equals(sTemperatureUnits)) {
+			adjustTemperatureDisplaySummary(sharedPreferences);
+			return;
+		}
+		
+		if(key.equals(sMaxColdTemp)) {
+			adjustMaxColdTempSummary(sharedPreferences);
+			return;
+		}
+		
+		if(key.equals(sMinHotTemp)) {
+			adjustMinHotTempSummary(sharedPreferences);
+			return;
+		}
+		
+		if(key.equals(sCollectionInterval)) {
+			adjustCollectionIntervalSummary(sharedPreferences);
+			return;
 		}
 
 		/*
@@ -103,6 +137,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 			CheckBoxPreference mPreference = (CheckBoxPreference) findPreference(sLocationInfoManual);
 			mPreference.setChecked(!mValue);
+			return;
 
 		}
 
@@ -117,6 +152,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 			CheckBoxPreference mPreference = (CheckBoxPreference) findPreference(sLocationInfoGps);
 			mPreference.setChecked(!mValue);
+			return;
 		}
 
 		/*
@@ -142,6 +178,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 				}
 			}
+			
+			return;
 		}
 
 		if(key.equals(sManualLongitude)) {
@@ -165,8 +203,98 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				}
 			}
 		}
+		
+		return;
+	}
+	
+	/*
+	 * private methods to adjust the summary of some of the preferences
+	 */
+	@SuppressWarnings("deprecation")
+	private void adjustTemperatureDisplaySummary(SharedPreferences preferences) {
+		String mTemperatureUnits = preferences.getString(sTemperatureUnits, getString(R.string.preferences_display_temperature_default));
+		Preference mPreference = (Preference) findPreference(sTemperatureUnits);
+		if(mTemperatureUnits.equals("c")) {
+			mPreference.setSummary(String.format(getString(R.string.preferences_display_temperature_description), "¼C"));
+		} else if(mTemperatureUnits.equals("f")) {
+			mPreference.setSummary(String.format(getString(R.string.preferences_display_temperature_description), "¼F"));
+		} else {
+			mPreference.setSummary(String.format(getString(R.string.preferences_display_temperature_description), "¼K"));
+		}
 	}
 
+	@SuppressWarnings("deprecation")
+	private void adjustMaxColdTempSummary(SharedPreferences preferences) {
+		String mValue = preferences.getString(sMaxColdTemp, getString(R.string.preferences_display_max_cold_temp_default));
+		int mIntValue;
+		
+		// validate the value
+		try {
+			mIntValue = Integer.parseInt(mValue);
+		} catch (NumberFormatException e) {
+			mIntValue = -100;
+		}
+		
+		if(mIntValue > -20 && mIntValue < 100) {
+			Preference mPreference = (Preference) findPreference(sMaxColdTemp);
+			mPreference.setSummary(String.format(getString(R.string.preferences_display_max_cold_temp_description), mValue));
+		} else {
+			// remove the erroneous data
+			EditTextPreference mPreference = (EditTextPreference) findPreference(sMaxColdTemp);
+			mPreference.setText(getString(R.string.preferences_display_max_cold_temp_default));
+			
+			SharedPreferences.Editor mEditor = preferences.edit();
+			mEditor.putString(sMaxColdTemp, getString(R.string.preferences_display_max_cold_temp_default));
+			mEditor.apply();
+			
+			showDialog(sInvalidTempValueDialog);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void adjustMinHotTempSummary(SharedPreferences preferences) {
+		String mValue = preferences.getString(sMinHotTemp, getString(R.string.preferences_display_min_hot_temp_default));
+		int mIntValue;
+		
+		// validate the value
+		try {
+			mIntValue = Integer.parseInt(mValue);
+		} catch (NumberFormatException e) {
+			mIntValue = -100;
+		}
+		
+		if(mIntValue > 0 && mIntValue < 100) {
+			Preference mPreference = (Preference) findPreference(sMinHotTemp);
+			mPreference.setSummary(String.format(getString(R.string.preferences_display_min_hot_temp_description), mValue));
+		} else {
+			// remove the erroneous data
+			EditTextPreference mPreference = (EditTextPreference) findPreference(sMinHotTemp);
+			mPreference.setText(getString(R.string.preferences_display_min_hot_temp_default));
+			
+			SharedPreferences.Editor mEditor = preferences.edit();
+			mEditor.putString(sMinHotTemp, getString(R.string.preferences_display_min_hot_temp_default));
+			mEditor.apply();
+			
+			showDialog(sInvalidTempValueDialog);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void adjustCollectionIntervalSummary(SharedPreferences preferences) {
+		String mValue = preferences.getString(sCollectionInterval, getString(R.string.preferences_collection_interval_default));
+		long mLngValue = Long.parseLong(mValue) / 60000;
+		Preference mPreference = (Preference) findPreference(sCollectionInterval);
+		
+		if(mLngValue < 1) {
+			mPreference.setSummary(getString(R.string.preferences_collection_interval_summary_a));
+		}else if(mLngValue == 1) {
+			mPreference.setSummary(getString(R.string.preferences_collection_interval_summary_b));
+		} else {
+			mPreference.setSummary(String.format(getString(R.string.preferences_collection_interval_summary_c), mLngValue));
+		}
+	}
+
+	
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
@@ -256,6 +384,16 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				}
 			})
 			.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			return mBuilder.create();
+		case sInvalidTempValueDialog:
+			mBuilder.setMessage(R.string.preferences_dialog_invalid_temperature_message)
+			.setCancelable(false)
+			.setTitle(R.string.preferences_dialog_invalid_temperature_title)
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
 				}

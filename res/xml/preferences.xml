@@ -30,7 +30,7 @@
 		    android:key="preferences_display_temperature"
 			android:title="@string/preferences_display_temperature_title" 
 			android:summary="@string/preferences_display_temperature_description"
-			android:dialogTitle="@string/preferences_display_temperature_description"
+			android:dialogTitle="@string/preferences_display_temperature_title"
 			android:entries="@array/preferences_display_temperature_entries"
 			android:entryValues="@array/preferences_display_temperature_values"
 			android:defaultValue="@string/preferences_display_temperature_default" />
@@ -61,7 +61,7 @@
 	    <ListPreference 
 		    android:key="preferences_collection_interval"
 			android:title="@string/preferences_collection_interval_title" 
-			android:summary="@string/preferences_collection_interval_description"
+			android:summary="@string/preferences_collection_interval_summary_a"
 			android:dialogTitle="@string/preferences_collection_interval_description"
 			android:entries="@array/preferences_collection_interval_entries"
 			android:entryValues="@array/preferences_collection_interval_values"

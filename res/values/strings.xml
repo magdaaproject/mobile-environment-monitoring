@@ -86,22 +86,27 @@
     <string name="preferences_sensor_readings_title">Sensor Reading Preferences</string>
     
     <string name="preferences_display_temperature_title">Temperature Units</string>
-    <string name="preferences_display_temperature_description">The units used to display the temperature.</string>
+    <string name="preferences_display_temperature_description">Temperature is displayed in %s</string>
     <string name="preferences_display_temperature_default">c</string>
     
     <string name="preferences_display_max_cold_temp_title">Maxmimum Cold Temp</string>
-    <string name="preferences_display_max_cold_temp_description">The maximum temperature, in ºC, that is considered to be cold</string>
+    <string name="preferences_display_max_cold_temp_description">The maximum cold temperature is %sºC</string>
     <string name="preferences_display_max_cold_temp_dialog">The maximum cold temperature in ºC</string>
     <string name="preferences_display_max_cold_temp_default">20</string>
     
     <string name="preferences_display_min_hot_temp_title">Minimum Hot Temp</string>
-    <string name="preferences_display_min_hot_temp_description">The minimum temperature, in ºC, that is considered to be hot</string>
+    <string name="preferences_display_min_hot_temp_description">The minimum hot temperature is %sºC</string>
     <string name="preferences_display_min_hot_temp_dialog">The minimum hot temperature in ºC</string>
     <string name="preferences_display_min_hot_temp_default">30</string>
     
     <string name="preferences_collection_interval_title">Collection Interval</string>
+    <string name="preferences_collection_interval_summary_a">The interval between collections is 30 seconds</string>
+    <string name="preferences_collection_interval_summary_b">The interval between collections is 1 minute</string>
+    <string name="preferences_collection_interval_summary_c">The interval between collections is %s minutes</string>
     <string name="preferences_collection_interval_description">The interval between collecting a sensor reading</string>
     <string name="preferences_collection_interval_default">60000</string>
+    <string name="preferences_dialog_invalid_temperature_message">The entered temperature value is invalid</string>
+    <string name="preferences_dialog_invalid_temperature_title">Invalid Temperature</string>
     
     <string name="preferences_collection_location_title">Collect Geographic Location</string>
     <string name="preferences_collection_location_description">Collect geographic location information with a sensor reading</string>
