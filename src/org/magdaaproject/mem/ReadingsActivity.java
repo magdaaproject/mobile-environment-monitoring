@@ -163,9 +163,6 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		}
 
 		mPreferences = null;
-
-		// reset the UI
-		resetUI();
 		
 		// start the core service
 		coreServiceIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
@@ -173,6 +170,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 
 		// register the various broadcast receivers
 		registerReceivers();
+
+		// reset the UI
+		resetUI();		
 	}
 
 	/*
