@@ -49,7 +49,7 @@ public class LauncherActivity extends Activity implements OnClickListener {
 	/*
 	 * private class level constants
 	 */
-	private static final String sTag = "LauncherActivity";
+	private static final String sLogTag = "LauncherActivity";
 
 	private static final int sNoExternalStorage = 0;
 	private static final int sNoServalMesh = 1;
@@ -168,7 +168,7 @@ public class LauncherActivity extends Activity implements OnClickListener {
 			contactUs();
 			break;
 		default:
-			Log.w(sTag, "an unknown view fired an onClick event");
+			Log.w(sLogTag, "an unknown view fired an onClick event");
 		}
 
 	}

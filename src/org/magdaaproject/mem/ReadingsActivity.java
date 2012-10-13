@@ -20,6 +20,7 @@
 package org.magdaaproject.mem;
 
 import org.magdaaproject.mem.provider.ReadingsContract;
+import org.magdaaproject.mem.services.CoreService;
 import org.magdaaproject.utils.serval.ServalStatusReceiver;
 import org.magdaaproject.utils.TimeUtils;
 import org.magdaaproject.utils.UnitConversionUtils;
@@ -50,6 +51,7 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,6 +102,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private Intent coreServiceIntent = null;
 
 	private ServalStatusReceiver servalMeshStatusReceiver = null;
+	
+	private Button stopCollectionButton = null;
+	private Button viewChartsButton = null;
 
 	/*
 	 * (non-Javadoc)
@@ -167,6 +172,13 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		// start the core service
 		coreServiceIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
 		startService(coreServiceIntent);
+		
+		// setup the buttons
+		stopCollectionButton = (Button) findViewById(R.id.readings_ui_btn_stop);
+		stopCollectionButton.setOnClickListener(this);
+		
+		viewChartsButton = (Button) findViewById(R.id.readings_ui_btn_charts);
+		viewChartsButton.setOnClickListener(this);
 
 		// register the various broadcast receivers
 		registerReceivers();
@@ -181,7 +193,33 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
+		
+		// determine which view fired the event
+		switch(v.getId()) {
+		case R.id.readings_ui_btn_stop:
+			if(CoreService.isRunning()) {
+				// stop the service and finish
+				if(coreServiceIntent != null) {
+					stopService(coreServiceIntent);
+				}
+				finish();
+			} else {
+				// restart the service
+				if(coreServiceIntent != null) {
+					startService(coreServiceIntent);
+				}
+				
+				// reset the UI
+				resetUI();
+			}
+			break;
+		case R.id.readings_ui_btn_charts:
+			// show the chart functionality
+			Toast.makeText(getApplicationContext(), "Not implemented yet", Toast.LENGTH_LONG).show();
+			break;
+		default:
+			Log.w(sLogTag, "an unknown view fired an onClick event");
+		}
 
 	}
 
@@ -191,12 +229,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	@Override
 	public void onDestroy() {
-
-		// stop the service
-		if(coreServiceIntent != null) {
-			stopService(coreServiceIntent);
-		}
-
+		
 		// unregister the receivers
 		unregisterReceivers();
 
@@ -260,6 +293,13 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		//send off an intent to inquire about the status of the sensor
 		Intent mIntent = new Intent(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
 		sendBroadcast(mIntent);
+		
+		// check to see if collection is running
+		if(CoreService.isRunning() == false) {
+			stopCollectionButton.setText(R.string.readings_ui_btn_stop_restart);
+		} else {
+			stopCollectionButton.setText(R.string.readings_ui_btn_stop);
+		}
 	}
 
 

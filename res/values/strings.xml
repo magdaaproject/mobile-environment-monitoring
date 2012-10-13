@@ -78,6 +78,10 @@
     
     <string name="readings_ui_lbl_reading_time_default">Waiting for next reading&#8230;</string>
     
+    <string name="readings_ui_btn_stop">Stop Collection</string>
+    <string name="readings_ui_btn_stop_restart">Restart Collection</string>
+    <string name="readings_ui_btn_charts">View Charts</string>
+    
     <!-- instance writer related strings -->
     <string name="instance_writer_rhizome_share_failed">The attempt to share file via Rhizome\'$1%s\' failed. Check the error log for details.</string>
     

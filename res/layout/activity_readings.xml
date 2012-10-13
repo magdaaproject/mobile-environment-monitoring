@@ -85,5 +85,21 @@
     <TextView
        android:id="@+id/readings_ui_lbl_reading_time"
        style="@style/ui_elem_sub_header_2" />
+    
+    <LinearLayout
+        android:id="@+id/launcher_ui_layout_buttons"
+        style="@style/ui_elem_layout_default" >
+
+     <Button
+         android:id="@+id/readings_ui_btn_stop"
+         style="@style/ui_elem_button_default"
+         android:text="@string/readings_ui_btn_stop" />
+     
+     <Button
+            android:id="@+id/readings_ui_btn_charts"
+            style="@style/ui_elem_button_default"
+            android:text="@string/readings_ui_btn_charts" />
+     
+     </LinearLayout>
 
 </LinearLayout>
