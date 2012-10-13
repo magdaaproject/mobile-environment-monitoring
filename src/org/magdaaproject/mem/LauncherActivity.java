@@ -19,6 +19,7 @@
  */
 package org.magdaaproject.mem;
 
+import org.magdaaproject.mem.services.CoreService;
 import org.magdaaproject.utils.FileUtils;
 import org.magdaaproject.utils.serval.ServalUtils;
 
@@ -102,6 +103,11 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		
 		// enable the start button if appropriate
 		enableStartButton();
+		
+		// check to see if we should jump straight to the reading screen
+		if(CoreService.isRunning()) {
+			startButton.callOnClick();
+		}
 	}
 	
 	/*
