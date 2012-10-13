@@ -118,6 +118,20 @@
             android:configChanges="keyboardHidden|orientation|screenSize" >
         </activity>
         
+        <activity
+            android:name=".charts.TemperatureActivity"
+            android:label="@string/system_application_default_label"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize" >
+        </activity>
+        
+        <activity
+            android:name=".charts.HumidityActivity"
+            android:label="@string/system_application_default_label"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize" >
+        </activity>
+        
         <!-- services -->
         <service 
             android:exported="false" 

@@ -120,5 +120,12 @@
         <item name="android:layout_marginRight">@dimen/ui_elem_margin_right</item>
     </style>
     
+    <!-- chart styles -->
+    <style name="ui_elem_chart" parent="ui_elem_layout_fill_all">
+        <item name="android:layout_marginTop">@dimen/ui_elem_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/ui_elem_margin_bottom</item>
+        <item name="android:layout_marginLeft">@dimen/ui_elem_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/ui_elem_margin_right</item>
+    </style>
     
 </resources>

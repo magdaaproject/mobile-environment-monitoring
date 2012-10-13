@@ -60,5 +60,11 @@
         <item>gps</item>
         <item>manual</item>
     </string-array>
+    
+	<!-- available charts to view -->
+	<string-array name="readings_ui_dialog_charts_list">
+	    <item>Temperature</item>
+	    <item>Humidity</item>
+	</string-array>
 
 </resources>

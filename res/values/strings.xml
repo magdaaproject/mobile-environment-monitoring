@@ -80,7 +80,19 @@
     
     <string name="readings_ui_btn_stop">Stop Collection</string>
     <string name="readings_ui_btn_stop_restart">Restart Collection</string>
-    <string name="readings_ui_btn_charts">View Charts</string>
+    <string name="readings_ui_btn_charts">View Chart</string>
+    
+    <string name="readings_ui_dialog_charts_title">Pick a Chart</string>
+    
+    <!-- temperature chart related strings -->
+    <string name="chart_temperature_ui_lbl_header">Temperature Past Hour</string>
+    <string name="chart_temperature_ui_chart_title">Temperature</string>
+    <string name="chart_temperature_ui_chart_series_title">Temperature in %s</string>
+    <string name="chart_temperature_ui_chart_domain_label">Time</string>
+    
+    <!-- humidity chart related strings -->
+    <string name="chart_humidity_ui_lbl_header">Relative Humidity Past Hour</string>
+    <string name="chart_humidity_ui_chart_title">Temperature</string>
     
     <!-- instance writer related strings -->
     <string name="instance_writer_rhizome_share_failed">The attempt to share file via Rhizome\'$1%s\' failed. Check the error log for details.</string>

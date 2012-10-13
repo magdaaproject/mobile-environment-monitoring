@@ -68,6 +68,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private static final boolean sVerboseLog = true;
 	private static final String sLogTag = "ReadingsActivity";
 	private static final int sGpsNotEnabledDialog = 0;
+	private static final int sSelectChartDialog = 1;
 
 	/*
 	 * private class level variables
@@ -102,9 +103,11 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private Intent coreServiceIntent = null;
 
 	private ServalStatusReceiver servalMeshStatusReceiver = null;
-	
+
 	private Button stopCollectionButton = null;
 	private Button viewChartsButton = null;
+	
+	private ReadingsActivity parentActivity;
 
 	/*
 	 * (non-Javadoc)
@@ -115,6 +118,9 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_readings);
+		
+		// store a reference to this activity
+		parentActivity = this;
 
 		// find all of the necessary views
 		sensorStatusView = (TextView) findViewById(R.id.readings_ui_lbl_sensor_status);
@@ -168,15 +174,15 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		}
 
 		mPreferences = null;
-		
+
 		// start the core service
 		coreServiceIntent = new Intent(this, org.magdaaproject.mem.services.CoreService.class);
 		startService(coreServiceIntent);
-		
+
 		// setup the buttons
 		stopCollectionButton = (Button) findViewById(R.id.readings_ui_btn_stop);
 		stopCollectionButton.setOnClickListener(this);
-		
+
 		viewChartsButton = (Button) findViewById(R.id.readings_ui_btn_charts);
 		viewChartsButton.setOnClickListener(this);
 
@@ -193,7 +199,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	@Override
 	public void onClick(View v) {
-		
+
 		// determine which view fired the event
 		switch(v.getId()) {
 		case R.id.readings_ui_btn_stop:
@@ -208,7 +214,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 				if(coreServiceIntent != null) {
 					startService(coreServiceIntent);
 				}
-				
+
 				// reset the UI
 				resetUI();
 			}
@@ -229,7 +235,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	@Override
 	public void onDestroy() {
-		
+
 		// unregister the receivers
 		unregisterReceivers();
 
@@ -255,7 +261,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	@Override
 	public void onResume() {
-		
+
 		// register the receivers
 		registerReceivers();
 
@@ -289,11 +295,11 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 
 		// reset the time ui component
 		readingTimeView.setText(R.string.readings_ui_lbl_reading_time_default);
-		
+
 		//send off an intent to inquire about the status of the sensor
 		Intent mIntent = new Intent(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
 		sendBroadcast(mIntent);
-		
+
 		// check to see if collection is running
 		if(CoreService.isRunning() == false) {
 			stopCollectionButton.setText(R.string.readings_ui_btn_stop_restart);
@@ -341,7 +347,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		// send off an intent to poll for the current state of the serval mesh
 		Intent mIntent = new Intent(ServalStatusReceiver.SERVAL_STATE_CHECK_ACTION);
 		startService(mIntent);
-		
+
 		//send off an intent to inquire about the status of the sensor
 		mIntent = new Intent(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
 		sendBroadcast(mIntent);
@@ -394,6 +400,29 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 				}
 			});
 			return mBuilder.create();
+		case sSelectChartDialog:
+			mBuilder.setTitle(R.string.readings_ui_dialog_charts_title)
+			.setItems(R.array.readings_ui_dialog_charts_list, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					// show one of the chart activities
+					Intent mIntent;
+					
+					// determine which chart activity to show
+					switch(which) {
+					case 0: // temperature chart
+						mIntent = new Intent(parentActivity, org.magdaaproject.mem.charts.TemperatureActivity.class);
+						break;
+					case 1: // humidity chart
+						mIntent = new Intent(parentActivity, org.magdaaproject.mem.charts.HumidityActivity.class);
+						break;
+					default:
+						Log.e(sLogTag, "unknown chart selected");
+						return;
+					}
+					startActivity(mIntent);
+				}
+			});
+			return mBuilder.create();
 		default:
 			return super.onCreateDialog(id);
 		}
@@ -410,22 +439,22 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 		 */
 		private String[] projection = null; 
 		private ContentResolver contentResolver = null;
-		
+
 		private volatile String lastRecordId = "";
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			
+
 			// get the URI from the intent
 			Uri mNewRecord = intent.getData();
-			
+
 			// filter out multiple calls with the same id
 			// workaround, no idea what is causing the issue
 			if(lastRecordId.equals(mNewRecord.getLastPathSegment())) {
 				// return, no need to continue
 				return;
 			}
-			
+
 			// store this record id to filter out duplicate calls
 			lastRecordId = mNewRecord.getLastPathSegment();
 
