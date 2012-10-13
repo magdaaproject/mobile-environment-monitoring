@@ -75,6 +75,9 @@ public class CoreService extends IOIOService {
 
 	// identification for the notification
 	private static final int sNotificationId = 1;
+	
+	// identify if the service is running or not
+	private static boolean isRunning = false;
 
 	/*
 	 * private class level variables
@@ -214,6 +217,9 @@ public class CoreService extends IOIOService {
 		IntentFilter mIntentFilter = new IntentFilter();
 		mIntentFilter.addAction(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
 		registerReceiver(sensorStatusEnquiryReceiver, mIntentFilter);
+		
+		// update the isRunning flag;
+		isRunning = true;
 
 		// return the start sticky flag
 		return android.app.Service.START_STICKY;
@@ -285,6 +291,9 @@ public class CoreService extends IOIOService {
 		} catch (IllegalArgumentException e) {
 			Log.w(sLogTag, "IllegalArgumentException thrown when unregistering receivers");
 		}
+		
+		// update the isRunning flag;
+		isRunning = false;
 	}
 
 	/*
@@ -295,6 +304,14 @@ public class CoreService extends IOIOService {
 	public IBinder onBind(Intent arg0) {
 		// return null as we don't expect anyone will bind to this service
 		return null;
+	}
+	
+	/**
+	 * check to see if this service is running or now
+	 * @return true if the service is running
+	 */
+	public static boolean isRunning() {
+		return isRunning;
 	}
 	
 	/*
