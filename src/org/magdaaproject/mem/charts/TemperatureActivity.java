@@ -200,7 +200,7 @@ public class TemperatureActivity extends Activity {
 			private static final long serialVersionUID = -6090275787464042111L;
 	
 			// private class level variables
-			private SimpleDateFormat dateFormat = new SimpleDateFormat(TimeUtils.DEFAULT_TIME_FORMAT);
+			private SimpleDateFormat dateFormat = new SimpleDateFormat(TimeUtils.DEFAULT_SHORT_TIME_FORMAT);
 
 			/*
 			 * (non-Javadoc)
