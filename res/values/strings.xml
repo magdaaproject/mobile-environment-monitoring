@@ -87,7 +87,7 @@
     <!-- temperature chart related strings -->
     <string name="chart_temperature_ui_lbl_header">Temperature Past Hour</string>
     <string name="chart_temperature_ui_chart_title">Temperature</string>
-    <string name="chart_temperature_ui_chart_series_title">Temperature in %s</string>
+    <string name="chart_temperature_ui_chart_series_title">Temperature in º%s</string>
     <string name="chart_temperature_ui_chart_domain_label">Time</string>
     
     <!-- humidity chart related strings -->

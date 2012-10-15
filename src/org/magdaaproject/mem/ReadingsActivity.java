@@ -197,6 +197,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 * (non-Javadoc)
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onClick(View v) {
 
@@ -221,8 +222,7 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.readings_ui_btn_charts:
 			// show the chart functionality
-			Toast.makeText(getApplicationContext(), "Not implemented yet", Toast.LENGTH_LONG).show();
-			break;
+			showDialog(sSelectChartDialog);
 		default:
 			Log.w(sLogTag, "an unknown view fired an onClick event");
 		}
@@ -528,6 +528,11 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 
 			// update the sensor status
 			updateSensorStatus(intent.getBooleanExtra("connected", false));
+			
+			// ensure the stop service button has the appropriate text
+			if(stopCollectionButton.getText().equals(getString(R.string.readings_ui_btn_stop)) == false ) {
+				stopCollectionButton.setText(R.string.readings_ui_btn_stop);
+			}
 		}
 
 	};

@@ -30,6 +30,7 @@ import org.magdaaproject.mem.R;
 import org.magdaaproject.mem.provider.ReadingsContract;
 import org.magdaaproject.utils.TimeUtils;
 
+import android.graphics.Shader;
 import com.androidplot.Plot;
 import com.androidplot.series.XYSeries;
 import com.androidplot.xy.LineAndPointFormatter;
@@ -43,6 +44,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -85,6 +88,7 @@ public class TemperatureActivity extends Activity {
 		// get the temperature display preference
 		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		temperatureScale = mPreferences.getString(sTemperatureUnits, getString(R.string.preferences_display_temperature_default));
+		temperatureScale = temperatureScale.toUpperCase();
 		
 		// get the data
 		XYSeries mSeries = getData();
@@ -102,12 +106,13 @@ public class TemperatureActivity extends Activity {
 		temperatureChart.setDomainStep(XYStepMode.SUBDIVIDE, mSeries.size());
 		
 		// customise the chart labels
+		temperatureChart.setTitle(getString(R.string.chart_temperature_ui_chart_title));
 		temperatureChart.setDomainLabel(getString(R.string.chart_temperature_ui_chart_domain_label));
-		temperatureChart.setRangeLabel(temperatureScale);
+		temperatureChart.setRangeLabel("¼" + temperatureScale);
 		temperatureChart.setDomainValueFormat(getDomainValueFormat());
 		
 		// TODO hide developer helper markup
-		//temperatureChart.disableAllMarkup();
+		temperatureChart.disableAllMarkup();
 		
 	}
 	
@@ -151,9 +156,12 @@ public class TemperatureActivity extends Activity {
 		Number[] mTemperatures = new Number[mCursor.getCount()];
 		Number[] mTimestamps = new Number[mCursor.getCount()];
 		
+		int mFakeTimestamp = 0;
+		
 		while(mCursor.moveToNext()) {
 			mTemperatures[mCursor.getPosition()] = mCursor.getFloat(mCursor.getColumnIndex(ReadingsContract.Table.TEMPERATURE));
-			mTimestamps[mCursor.getPosition()] = mCursor.getLong(mCursor.getColumnIndex(ReadingsContract.Table.TIMESTAMP)) / sTimeDivisor;
+			//mTimestamps[mCursor.getPosition()] = mCursor.getLong(mCursor.getColumnIndex(ReadingsContract.Table.TIMESTAMP)) / sTimeDivisor;
+			mTimestamps[mCursor.getPosition()] = mFakeTimestamp++;
 		}
 		
 		// play nice and tidy up
@@ -185,10 +193,16 @@ public class TemperatureActivity extends Activity {
 	// TODO break this into the magdaa library for consistent look and feel of charts
 	private LineAndPointFormatter getLineStyle() {
 		// Create a formatter to use for drawing a series using LineAndPointRenderer:
-        return new LineAndPointFormatter(
-                Color.rgb(0, 100, 0),                   // line color
-                Color.rgb(0, 100, 0),                   // point color
-                Color.rgb(100, 200, 0));                // fill color
+		LineAndPointFormatter mFormatter = new LineAndPointFormatter(Color.BLUE, Color.CYAN, Color.BLUE);
+		
+		// create a better fill paint
+		Paint mLineFill = new Paint();
+        mLineFill.setAlpha(200);
+        mLineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, Color.BLUE, Shader.TileMode.MIRROR));
+        
+        mFormatter.setFillPaint(mLineFill);
+        
+        return mFormatter;
 	}
 	
 	// private method to return a formatter for the time labels
@@ -200,7 +214,7 @@ public class TemperatureActivity extends Activity {
 			private static final long serialVersionUID = -6090275787464042111L;
 	
 			// private class level variables
-			private SimpleDateFormat dateFormat = new SimpleDateFormat(TimeUtils.DEFAULT_SHORT_TIME_FORMAT);
+			//private SimpleDateFormat dateFormat = new SimpleDateFormat(TimeUtils.DEFAULT_SHORT_TIME_FORMAT);
 
 			/*
 			 * (non-Javadoc)
@@ -210,9 +224,11 @@ public class TemperatureActivity extends Activity {
 			public StringBuffer format(Object object, StringBuffer buffer, FieldPosition field) {
 				
 				// adjust the times
-				long timestamp = ((Number) object).longValue() * sTimeDivisor;
-                Date date = new Date(timestamp);
-                return dateFormat.format(date, buffer, field);
+//				long timestamp = ((Number) object).longValue() * sTimeDivisor;
+//                Date date = new Date(timestamp);
+//                //return dateFormat.format(date, buffer, field);
+                // return an empty string buffer to disable the display of domain labels
+                return new StringBuffer();
 
 			}
 
