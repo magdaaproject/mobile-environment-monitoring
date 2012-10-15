@@ -103,11 +103,6 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		
 		// enable the start button if appropriate
 		enableStartButton();
-		
-		// check to see if we should jump straight to the reading screen
-		if(CoreService.isRunning()) {
-			startButton.callOnClick();
-		}
 	}
 	
 	/*
@@ -141,6 +136,13 @@ public class LauncherActivity extends Activity implements OnClickListener {
         }
         
         startButton.setEnabled(mAllowStart);
+        
+        // adjust the label of the button so it makes sense
+ 		if(CoreService.isRunning()) {
+ 			startButton.setText(R.string.launcher_ui_btn_start_continue);
+ 		} else {
+ 			startButton.setText(R.string.launcher_ui_btn_start);
+ 		}
 	}
 
 	/*

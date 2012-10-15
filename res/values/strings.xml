@@ -38,6 +38,7 @@
     
     <string name="launcher_ui_btn_settings">Preferences</string>
     <string name="launcher_ui_btn_start">Start</string>
+    <string name="launcher_ui_btn_start_continue">Continue</string>
     <string name="launcher_ui_btn_contact">Email MaGDAA</string>
     
     <string name="launcher_ui_dialog_no_external_storage_message">External storage, such as an SD Card, must be enabled before using this application</string>
