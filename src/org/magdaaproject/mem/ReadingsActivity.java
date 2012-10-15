@@ -108,6 +108,10 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	private Button viewChartsButton = null;
 	
 	private ReadingsActivity parentActivity;
+	
+	private float previousTemperature;
+	private float previousHumidity;
+	private long  previousTimestamp = -1;
 
 	/*
 	 * (non-Javadoc)
@@ -276,25 +280,42 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 	 */
 	private void resetUI() {
 
-		String mValue = null;
-
-		// reset the temperature UI component
-		if(temperatureFormat.equals("c")) {
-			mValue = getString(R.string.readings_ui_lbl_temperature_default_celsius);
-		} else if(temperatureFormat.equals("f")) {
-			mValue = getString(R.string.readings_ui_lbl_temperature_default_fahrenheit);
+		// use default place holder or last reading values
+		if(previousTimestamp == -1) {
+			// use placeholder
+			String mValue = null;
+	
+			// reset the temperature UI component
+			if(temperatureFormat.equals("c")) {
+				mValue = getString(R.string.readings_ui_lbl_temperature_default_celsius);
+			} else if(temperatureFormat.equals("f")) {
+				mValue = getString(R.string.readings_ui_lbl_temperature_default_fahrenheit);
+			} else {
+				mValue = getString(R.string.readings_ui_lbl_temperature_default_kelvin);
+			}
+	
+			temperatureValueView.setText(mValue);
+	
+			// reset the humidity ui component
+			mValue = getString(R.string.readings_ui_lbl_humidity_default);
+			humidityValueView.setText(mValue);
+	
+			// reset the time ui component
+			readingTimeView.setText(R.string.readings_ui_lbl_reading_time_default);
 		} else {
-			mValue = getString(R.string.readings_ui_lbl_temperature_default_kelvin);
+			// use previous values
+			
+			// update the temperature
+			updateTemperatureValue(previousTemperature);
+			updateTemperatureImage(previousTemperature);
+
+			// update the humidity
+			updateHumidityValue(previousHumidity);
+			updateHumidityImage(previousHumidity);
+
+			// update the reading time
+			updateReadingTime(previousTimestamp);
 		}
-
-		temperatureValueView.setText(mValue);
-
-		// reset the humidity ui component
-		mValue = getString(R.string.readings_ui_lbl_humidity_default);
-		humidityValueView.setText(mValue);
-
-		// reset the time ui component
-		readingTimeView.setText(R.string.readings_ui_lbl_reading_time_default);
 
 		//send off an intent to inquire about the status of the sensor
 		Intent mIntent = new Intent(getString(R.string.system_broadcast_intent_sensor_status_inquiry_action));
@@ -491,13 +512,16 @@ public class ReadingsActivity extends Activity implements OnClickListener {
 				// update the temperature
 				updateTemperatureValue(mCursor.getFloat(mCursor.getColumnIndex(projection[0])));
 				updateTemperatureImage(mCursor.getFloat(mCursor.getColumnIndex(projection[0])));
+				previousTemperature = mCursor.getFloat(mCursor.getColumnIndex(projection[0]));
 
 				// update the humidity
 				updateHumidityValue(mCursor.getFloat(mCursor.getColumnIndex(projection[1])));
 				updateHumidityImage(mCursor.getFloat(mCursor.getColumnIndex(projection[1])));
+				previousHumidity = mCursor.getFloat(mCursor.getColumnIndex(projection[1]));
 
 				// update the reading time
 				updateReadingTime(mCursor.getLong(mCursor.getColumnIndex(projection[2])));
+				previousTimestamp = mCursor.getLong(mCursor.getColumnIndex(projection[2]));
 
 				mCursor.close();
 			}
