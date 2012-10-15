@@ -22,17 +22,15 @@ package org.magdaaproject.mem.charts;
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 import org.magdaaproject.mem.R;
 import org.magdaaproject.mem.provider.ReadingsContract;
-import org.magdaaproject.utils.TimeUtils;
 
 import android.graphics.Shader;
 import com.androidplot.Plot;
 import com.androidplot.series.XYSeries;
+import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
@@ -48,6 +46,7 @@ import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * The temperature chart activity for the MEM software, this is where the
@@ -58,13 +57,19 @@ public class TemperatureActivity extends Activity {
 	/*
 	 * private class level constants
 	 */
-//	private static final boolean sVerboseLog = true;
-//	private static final String sLogTag = "TemperatureActivity";
-	
+	private static final boolean sVerboseLog = false;
+	private static final String sLogTag = "TemperatureActivity";
+
+	// debug code
+	//private static final long sOneHour = 3600000 * 4;
+
 	private static final long sOneHour = 3600000;
-	private static final long sTimeDivisor = 1000;
+
+	//	private static final long sTimeDivisor = 1000;
 	
 	private static final String sTemperatureUnits = "preferences_display_temperature";
+	
+	private static int sDefaultRangeBuffer = 5;
 	
 	/*
 	 * private class level variables
@@ -93,6 +98,9 @@ public class TemperatureActivity extends Activity {
 		// get the data
 		XYSeries mSeries = getData();
 		
+		// get the boundaries for the range values
+		Float[] mRange = getRangeBoundaries(mSeries);
+		
 		// format the chart
 		formatChart(temperatureChart);
 		
@@ -110,6 +118,15 @@ public class TemperatureActivity extends Activity {
 		temperatureChart.setDomainLabel(getString(R.string.chart_temperature_ui_chart_domain_label));
 		temperatureChart.setRangeLabel("¼" + temperatureScale);
 		temperatureChart.setDomainValueFormat(getDomainValueFormat());
+		
+		temperatureChart.setRangeLowerBoundary(mRange[0] - sDefaultRangeBuffer, BoundaryMode.FIXED);
+		temperatureChart.setRangeUpperBoundary(mRange[1] + sDefaultRangeBuffer, BoundaryMode.FIXED);
+		
+		// debug messages 
+		if(sVerboseLog) {
+			Log.v(sLogTag, "RangeMin '" + mRange[0] + "'");
+			Log.v(sLogTag, "RnageMax '" + mRange[1] + "'");
+		}
 		
 		// TODO hide developer helper markup
 		temperatureChart.disableAllMarkup();
@@ -243,5 +260,31 @@ public class TemperatureActivity extends Activity {
 		};
 		
 		return mFormat;
+	}
+	
+	// get range boundaries for the y axis
+	private Float[] getRangeBoundaries(XYSeries series) {
+		
+		Float[] mRange = new Float[2];
+		
+		mRange[1] = Float.MIN_NORMAL;
+		mRange[0] = Float.MAX_VALUE;
+		
+		float mYValue;
+		
+		for(int i = 0; i < series.size(); i++) {
+			
+			mYValue = (Float) series.getY(i);
+			
+			if(mYValue < mRange[0]) {
+				mRange[0] = mYValue;
+			}
+			
+			if(mYValue > mRange[1]) {
+				mRange[1] = mYValue;
+			}
+		}
+		
+		return mRange;
 	}
 }
