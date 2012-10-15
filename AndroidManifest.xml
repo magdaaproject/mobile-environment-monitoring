@@ -122,14 +122,16 @@
             android:name=".charts.TemperatureActivity"
             android:label="@string/system_application_default_label"
             android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|orientation|screenSize" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:hardwareAccelerated="false">
         </activity>
         
         <activity
             android:name=".charts.HumidityActivity"
             android:label="@string/system_application_default_label"
             android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|orientation|screenSize" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:hardwareAccelerated="false" > 
         </activity>
         
         <!-- services -->
