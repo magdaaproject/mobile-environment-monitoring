@@ -93,7 +93,10 @@
     
     <!-- humidity chart related strings -->
     <string name="chart_humidity_ui_lbl_header">Relative Humidity Past Hour</string>
-    <string name="chart_humidity_ui_chart_title">Temperature</string>
+    <string name="chart_humidity_ui_chart_title">Relative Humidity</string>
+    
+    <string name="chart_humidity_ui_chart_series_label">Humidity</string>
+    <string name="chart_humidity_ui_chart_domain_label">Time</string>
     
     <!-- instance writer related strings -->
     <string name="instance_writer_rhizome_share_failed">The attempt to share file via Rhizome\'$1%s\' failed. Check the error log for details.</string>
