@@ -39,6 +39,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 /**
  * The temperature chart activity for the MEM software, this is where the
@@ -82,6 +83,12 @@ public class TemperatureActivity extends Activity {
 		
 		// get the data
 		XYSeries mSeries = getData();
+		
+		// deal with the situation where no data is available
+		if(mSeries == null) {
+			Toast.makeText(getApplicationContext(), R.string.chart_ui_toast_no_data, Toast.LENGTH_LONG).show();
+			finish();
+		}
 		
 		// get the boundaries for the range values
 		Float[] mRange = ChartUtils.getRangeBoundaries(mSeries);

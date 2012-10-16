@@ -37,6 +37,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.Toast;
 
 /**
  * The humidity chart activity for the MEM software, this is where the
@@ -71,6 +72,12 @@ public class HumidityActivity extends Activity {
 		
 		// get the data
 		XYSeries mSeries = getData();
+		
+		// deal with the situation where no data is available
+		if(mSeries == null) {
+			Toast.makeText(getApplicationContext(), R.string.chart_ui_toast_no_data, Toast.LENGTH_LONG).show();
+			finish();
+		}
 		
 		// get the boundaries for the range values
 		Float[] mRange = ChartUtils.getRangeBoundaries(mSeries);

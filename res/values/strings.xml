@@ -98,6 +98,8 @@
     <string name="chart_humidity_ui_chart_series_label">Humidity</string>
     <string name="chart_humidity_ui_chart_domain_label">Time</string>
     
+    <string name="chart_ui_toast_no_data">There is insufficient data to display a chart at this time, please try again later</string>
+    
     <!-- instance writer related strings -->
     <string name="instance_writer_rhizome_share_failed">The attempt to share file via Rhizome\'$1%s\' failed. Check the error log for details.</string>
     
