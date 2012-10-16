@@ -19,16 +19,12 @@
  */
 package org.magdaaproject.mem.charts;
 
-import java.text.FieldPosition;
-import java.text.Format;
-import java.text.ParsePosition;
 import java.util.Arrays;
 
 import org.magdaaproject.mem.R;
 import org.magdaaproject.mem.provider.ReadingsContract;
+import org.magdaaproject.utils.ChartUtils;
 
-import android.graphics.Shader;
-import com.androidplot.Plot;
 import com.androidplot.series.XYSeries;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
@@ -40,13 +36,8 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 /**
  * The temperature chart activity for the MEM software, this is where the
@@ -57,8 +48,8 @@ public class TemperatureActivity extends Activity {
 	/*
 	 * private class level constants
 	 */
-	private static final boolean sVerboseLog = false;
-	private static final String sLogTag = "TemperatureActivity";
+//	private static final boolean sVerboseLog = false;
+//	private static final String sLogTag = "TemperatureActivity";
 
 	// debug code
 	//private static final long sOneHour = 3600000 * 4;
@@ -99,13 +90,13 @@ public class TemperatureActivity extends Activity {
 		XYSeries mSeries = getData();
 		
 		// get the boundaries for the range values
-		Float[] mRange = getRangeBoundaries(mSeries);
+		Float[] mRange = ChartUtils.getRangeBoundaries(mSeries);
 		
 		// format the chart
-		formatChart(temperatureChart);
+		temperatureChart = ChartUtils.formatChart(temperatureChart);
 		
 		// get the line style
-		LineAndPointFormatter mLineStyle = getLineStyle();
+		LineAndPointFormatter mLineStyle = ChartUtils.getLineStyle();
 		
 		// add the data
 		temperatureChart.addSeries(mSeries, mLineStyle);
@@ -117,16 +108,10 @@ public class TemperatureActivity extends Activity {
 		temperatureChart.setTitle(getString(R.string.chart_temperature_ui_chart_title));
 		temperatureChart.setDomainLabel(getString(R.string.chart_temperature_ui_chart_domain_label));
 		temperatureChart.setRangeLabel("¼" + temperatureScale);
-		temperatureChart.setDomainValueFormat(getDomainValueFormat());
+		temperatureChart.setDomainValueFormat(ChartUtils.getBlankDomainFormatter());
 		
 		temperatureChart.setRangeLowerBoundary(mRange[0] - sDefaultRangeBuffer, BoundaryMode.FIXED);
 		temperatureChart.setRangeUpperBoundary(mRange[1] + sDefaultRangeBuffer, BoundaryMode.FIXED);
-		
-		// debug messages 
-		if(sVerboseLog) {
-			Log.v(sLogTag, "RangeMin '" + mRange[0] + "'");
-			Log.v(sLogTag, "RnageMax '" + mRange[1] + "'");
-		}
 		
 		// TODO hide developer helper markup
 		temperatureChart.disableAllMarkup();
@@ -189,102 +174,5 @@ public class TemperatureActivity extends Activity {
 				Arrays.asList(mTimestamps),
 				Arrays.asList(mTemperatures),
 				String.format(getString(R.string.chart_temperature_ui_chart_series_title), temperatureScale));
-	}
-	
-	// private method to format the chart
-	// TODO break this into the magdaa library for consistent look and feel of charts
-	private void formatChart(XYPlot xyPlot) {
-		xyPlot.getGraphWidget().getGridBackgroundPaint().setColor(Color.WHITE);
-		xyPlot.getGraphWidget().getGridLinePaint().setColor(Color.BLACK);
-		xyPlot.getGraphWidget().getGridLinePaint().setPathEffect(new DashPathEffect(new float[]{1,1}, 1));
-		xyPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
-		xyPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
- 
-		xyPlot.setBorderStyle(Plot.BorderStyle.SQUARE, null, null);
-		xyPlot.getBorderPaint().setStrokeWidth(1);
-		xyPlot.getBorderPaint().setAntiAlias(false);
-		xyPlot.getBorderPaint().setColor(Color.WHITE);
-	}
-	
-	// private method to return a line style
-	// TODO break this into the magdaa library for consistent look and feel of charts
-	private LineAndPointFormatter getLineStyle() {
-		// Create a formatter to use for drawing a series using LineAndPointRenderer:
-		LineAndPointFormatter mFormatter = new LineAndPointFormatter(Color.BLUE, Color.CYAN, Color.BLUE);
-		
-		// create a better fill paint
-		Paint mLineFill = new Paint();
-        mLineFill.setAlpha(200);
-        mLineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, Color.BLUE, Shader.TileMode.MIRROR));
-        
-        mFormatter.setFillPaint(mLineFill);
-        
-        return mFormatter;
-	}
-	
-	// private method to return a formatter for the time labels
-	// TODO break this into the magdaa library for consistent look and feel of charts
-	private Format getDomainValueFormat() {
-		
-		Format mFormat = new Format() {
-	
-			private static final long serialVersionUID = -6090275787464042111L;
-	
-			// private class level variables
-			//private SimpleDateFormat dateFormat = new SimpleDateFormat(TimeUtils.DEFAULT_SHORT_TIME_FORMAT);
-
-			/*
-			 * (non-Javadoc)
-			 * @see java.text.Format#format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition)
-			 */
-			@Override
-			public StringBuffer format(Object object, StringBuffer buffer, FieldPosition field) {
-				
-				// adjust the times
-//				long timestamp = ((Number) object).longValue() * sTimeDivisor;
-//                Date date = new Date(timestamp);
-//                //return dateFormat.format(date, buffer, field);
-                // return an empty string buffer to disable the display of domain labels
-                return new StringBuffer();
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * @see java.text.Format#parseObject(java.lang.String, java.text.ParsePosition)
-			 */
-			@Override
-			public Object parseObject(String string, ParsePosition position) {
-				return null;
-			}
-		};
-		
-		return mFormat;
-	}
-	
-	// get range boundaries for the y axis
-	private Float[] getRangeBoundaries(XYSeries series) {
-		
-		Float[] mRange = new Float[2];
-		
-		mRange[1] = Float.MIN_NORMAL;
-		mRange[0] = Float.MAX_VALUE;
-		
-		float mYValue;
-		
-		for(int i = 0; i < series.size(); i++) {
-			
-			mYValue = (Float) series.getY(i);
-			
-			if(mYValue < mRange[0]) {
-				mRange[0] = mYValue;
-			}
-			
-			if(mYValue > mRange[1]) {
-				mRange[1] = mYValue;
-			}
-		}
-		
-		return mRange;
 	}
 }
