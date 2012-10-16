@@ -24,6 +24,7 @@ import java.util.Arrays;
 import org.magdaaproject.mem.R;
 import org.magdaaproject.mem.provider.ReadingsContract;
 import org.magdaaproject.utils.ChartUtils;
+import org.magdaaproject.utils.TimeUtils;
 
 import com.androidplot.series.XYSeries;
 import com.androidplot.xy.BoundaryMode;
@@ -50,13 +51,6 @@ public class TemperatureActivity extends Activity {
 	 */
 //	private static final boolean sVerboseLog = false;
 //	private static final String sLogTag = "TemperatureActivity";
-
-	// debug code
-	//private static final long sOneHour = 3600000 * 4;
-
-	private static final long sOneHour = 3600000;
-
-	//	private static final long sTimeDivisor = 1000;
 	
 	private static final String sTemperatureUnits = "preferences_display_temperature";
 	
@@ -136,7 +130,7 @@ public class TemperatureActivity extends Activity {
 		String mSelection = ReadingsContract.Table.TIMESTAMP + " > ?";
 		
 		String[] mSelectionArgs = new String[1];
-		mSelectionArgs[0] = Long.toString(System.currentTimeMillis() - sOneHour);
+		mSelectionArgs[0] = Long.toString(System.currentTimeMillis() - TimeUtils.ONE_HOUR_IN_MILLISECONDS);
 		
 		String mSortOrder = ReadingsContract.Table.TIMESTAMP + " ASC"; 
 		
