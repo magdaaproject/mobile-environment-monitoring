@@ -28,11 +28,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.BulletSpan;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -53,7 +57,7 @@ public class LauncherActivity extends Activity implements OnClickListener {
 
 	private static final int sNoExternalStorage = 0;
 	private static final int sNoServalMesh = 1;
-	
+
 	/*
 	 * private class level variables
 	 */
@@ -100,11 +104,11 @@ public class LauncherActivity extends Activity implements OnClickListener {
 
 		mButton = (Button) findViewById(R.id.launcher_ui_btn_contact);
 		mButton.setOnClickListener(this);
-		
+
 		// enable the start button if appropriate
 		enableStartButton();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onResume()
@@ -112,15 +116,15 @@ public class LauncherActivity extends Activity implements OnClickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		
+
 		// enable the start button if appropriate
 		enableStartButton();
 	}
-	
-	
+
+
 	@SuppressWarnings("deprecation")
 	private void enableStartButton() {
-		
+
 		boolean mAllowStart = true;
 
 		// check on external storage
@@ -130,19 +134,19 @@ public class LauncherActivity extends Activity implements OnClickListener {
 		}
 
 		// check that Serval Mesh is installed
-        if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
-        	mAllowStart = false;
-        	showDialog(sNoServalMesh);
-        }
-        
-        startButton.setEnabled(mAllowStart);
-        
-        // adjust the label of the button so it makes sense
- 		if(CoreService.isRunning()) {
- 			startButton.setText(R.string.launcher_ui_btn_start_continue);
- 		} else {
- 			startButton.setText(R.string.launcher_ui_btn_start);
- 		}
+		if(ServalUtils.isServalMeshInstalled(getApplicationContext()) == false) {
+			mAllowStart = false;
+			showDialog(sNoServalMesh);
+		}
+
+		startButton.setEnabled(mAllowStart);
+
+		// adjust the label of the button so it makes sense
+		if(CoreService.isRunning()) {
+			startButton.setText(R.string.launcher_ui_btn_start_continue);
+		} else {
+			startButton.setText(R.string.launcher_ui_btn_start);
+		}
 	}
 
 	/*
@@ -210,6 +214,38 @@ public class LauncherActivity extends Activity implements OnClickListener {
 			return mBuilder.create();
 		default:
 			return super.onCreateDialog(id);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// inflate the menu based on the XML
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.activity_launcher, menu);
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		Intent mIntent;
+
+		switch(item.getItemId()){
+		case R.id.launcher_menu_acknowledgements:
+			// open the acknowledgments uri in the default browser
+			mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.system_acknowledgments_uri)));
+			startActivity(mIntent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
