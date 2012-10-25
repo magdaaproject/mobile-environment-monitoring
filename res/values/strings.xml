@@ -21,8 +21,6 @@
 -->
 <resources>
     
-    <string name="menu_settings">Settings</string>
-    
     <!-- application wide strings -->
     <string name="system_application_name">MaGDAA - MEM</string>
     <string name="system_application_default_label">MaGDAA - MEM</string>
