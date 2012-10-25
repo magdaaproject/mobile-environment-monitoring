@@ -77,6 +77,7 @@ public class HumidityActivity extends Activity {
 		if(mSeries == null) {
 			Toast.makeText(getApplicationContext(), R.string.chart_ui_toast_no_data, Toast.LENGTH_LONG).show();
 			finish();
+			return;
 		}
 		
 		// get the boundaries for the range values
