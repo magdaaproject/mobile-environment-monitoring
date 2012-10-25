@@ -66,6 +66,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	private static final String sMaxColdTemp = "preferences_display_max_cold_temp";
 	private static final String sMinHotTemp = "preferences_display_min_hot_temp";
 	private static final String sCollectionInterval = "preferences_collection_interval";
+	
+	private static final int sMaxColdTempValidator = -100;
+	private static final int sMinHotTempValidator = 100;
 
 	/*
 	 * (non-Javadoc)
@@ -109,13 +112,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			return;
 		}
 		
-		if(key.equals(sMaxColdTemp)) {
-			adjustMaxColdTempSummary(sharedPreferences);
-			return;
-		}
-		
-		if(key.equals(sMinHotTemp)) {
-			adjustMinHotTempSummary(sharedPreferences);
+		// double check the max cold temp and min hot temp values
+		if(key.equals(sMaxColdTemp) || key.equals(sMinHotTemp)) {
+			validateTemps(sharedPreferences);
 			return;
 		}
 		
@@ -223,62 +222,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			mPreference.setSummary(String.format(getString(R.string.preferences_display_temperature_description), "¼K"));
 		}
 	}
-
-	@SuppressWarnings("deprecation")
-	private void adjustMaxColdTempSummary(SharedPreferences preferences) {
-		String mValue = preferences.getString(sMaxColdTemp, getString(R.string.preferences_display_max_cold_temp_default));
-		int mIntValue;
-		
-		// validate the value
-		try {
-			mIntValue = Integer.parseInt(mValue);
-		} catch (NumberFormatException e) {
-			mIntValue = -100;
-		}
-		
-		if(mIntValue > -20 && mIntValue < 100) {
-			Preference mPreference = (Preference) findPreference(sMaxColdTemp);
-			mPreference.setSummary(String.format(getString(R.string.preferences_display_max_cold_temp_description), mValue));
-		} else {
-			// remove the erroneous data
-			EditTextPreference mPreference = (EditTextPreference) findPreference(sMaxColdTemp);
-			mPreference.setText(getString(R.string.preferences_display_max_cold_temp_default));
-			
-			SharedPreferences.Editor mEditor = preferences.edit();
-			mEditor.putString(sMaxColdTemp, getString(R.string.preferences_display_max_cold_temp_default));
-			mEditor.apply();
-			
-			showDialog(sInvalidTempValueDialog);
-		}
-	}
-	
-	@SuppressWarnings("deprecation")
-	private void adjustMinHotTempSummary(SharedPreferences preferences) {
-		String mValue = preferences.getString(sMinHotTemp, getString(R.string.preferences_display_min_hot_temp_default));
-		int mIntValue;
-		
-		// validate the value
-		try {
-			mIntValue = Integer.parseInt(mValue);
-		} catch (NumberFormatException e) {
-			mIntValue = -100;
-		}
-		
-		if(mIntValue > 0 && mIntValue < 100) {
-			Preference mPreference = (Preference) findPreference(sMinHotTemp);
-			mPreference.setSummary(String.format(getString(R.string.preferences_display_min_hot_temp_description), mValue));
-		} else {
-			// remove the erroneous data
-			EditTextPreference mPreference = (EditTextPreference) findPreference(sMinHotTemp);
-			mPreference.setText(getString(R.string.preferences_display_min_hot_temp_default));
-			
-			SharedPreferences.Editor mEditor = preferences.edit();
-			mEditor.putString(sMinHotTemp, getString(R.string.preferences_display_min_hot_temp_default));
-			mEditor.apply();
-			
-			showDialog(sInvalidTempValueDialog);
-		}
-	}
 	
 	@SuppressWarnings("deprecation")
 	private void adjustCollectionIntervalSummary(SharedPreferences preferences) {
@@ -294,8 +237,117 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			mPreference.setSummary(String.format(getString(R.string.preferences_collection_interval_summary_c), mLngValue));
 		}
 	}
-
 	
+	@SuppressWarnings("deprecation")
+	private void validateTemps(SharedPreferences preferences) {
+
+		// get the values for comparison
+		String mValue = preferences.getString(sMaxColdTemp, getString(R.string.preferences_display_max_cold_temp_default));
+		int mMaxColdTemp;
+		
+		try {
+			mMaxColdTemp = Integer.parseInt(mValue);
+		} catch (NumberFormatException e) {
+			showDialog(sInvalidTempValueDialog);
+			return;
+		}
+		
+		mValue = preferences.getString(sMinHotTemp, getString(R.string.preferences_display_min_hot_temp_default));
+		int mMinHotTemp;
+		
+		try {
+			mMinHotTemp = Integer.parseInt(mValue);
+		} catch (NumberFormatException e) {
+			showDialog(sInvalidTempValueDialog);
+			return;
+		}
+		
+		// validate the temperature values
+		if(mMaxColdTemp < sMaxColdTempValidator) {
+			resetMaxColdTemp(preferences);
+			showDialog(sInvalidTempValueDialog);
+			return;
+		}
+		
+		if(mMinHotTemp > sMinHotTempValidator) {
+			resetMinHotTemp(preferences);
+			showDialog(sInvalidTempValueDialog);
+			return;
+		}
+		
+		
+		if(mMaxColdTemp == mMinHotTemp) { // can't be the same
+			resetMaxColdTemp(preferences);
+			resetMinHotTemp(preferences);
+			showDialog(sInvalidTempValueDialog);
+			return;
+		}
+		
+		if(mMaxColdTemp > mMinHotTemp) { // max cold can't be greater than min hot
+			resetMaxColdTemp(preferences);
+			resetMinHotTemp(preferences);
+			showDialog(sInvalidTempValueDialog);
+			return;
+		}
+		
+		if(mMinHotTemp < mMaxColdTemp) { // min hot can't be greater than max cold
+			resetMaxColdTemp(preferences);
+			resetMinHotTemp(preferences);
+			showDialog(sInvalidTempValueDialog);
+			return;
+		}
+		
+		adjustMaxColdTempSummary(preferences);
+		adjustMinHotTempSummary(preferences);
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void resetMaxColdTemp(SharedPreferences preferences) {
+		// remove the erroneous data
+		EditTextPreference mPreference = (EditTextPreference) findPreference(sMaxColdTemp);
+		mPreference.setText(getString(R.string.preferences_display_max_cold_temp_default));
+		
+		SharedPreferences.Editor mEditor = preferences.edit();
+		mEditor.putString(sMaxColdTemp, getString(R.string.preferences_display_max_cold_temp_default));
+		mEditor.apply();
+		
+		mPreference.setSummary(
+				String.format(getString(R.string.preferences_display_max_cold_temp_description),
+				getString(R.string.preferences_display_max_cold_temp_default)));
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void resetMinHotTemp(SharedPreferences preferences) {
+		// remove the erroneous data
+		EditTextPreference mPreference = (EditTextPreference) findPreference(sMinHotTemp);
+		mPreference.setText(getString(R.string.preferences_display_min_hot_temp_default));
+		
+		SharedPreferences.Editor mEditor = preferences.edit();
+		mEditor.putString(sMinHotTemp, getString(R.string.preferences_display_min_hot_temp_default));
+		mEditor.apply();
+		
+		
+		mPreference.setSummary(
+				String.format(getString(R.string.preferences_display_min_hot_temp_description),
+				getString(R.string.preferences_display_min_hot_temp_default)));
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void adjustMaxColdTempSummary(SharedPreferences preferences) {
+		EditTextPreference mPreference = (EditTextPreference) findPreference(sMaxColdTemp);
+		mPreference.setSummary(
+				String.format(getString(R.string.preferences_display_max_cold_temp_description),
+				preferences.getString(sMaxColdTemp, getString(R.string.preferences_display_max_cold_temp_default))));
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void adjustMinHotTempSummary(SharedPreferences preferences) {
+		EditTextPreference mPreference = (EditTextPreference) findPreference(sMinHotTemp);
+		mPreference.setSummary(
+				String.format(getString(R.string.preferences_display_min_hot_temp_description),
+				preferences.getString(sMinHotTemp, getString(R.string.preferences_display_min_hot_temp_default))));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see android.app.Activity#onBackPressed()
