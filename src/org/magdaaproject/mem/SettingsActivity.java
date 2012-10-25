@@ -51,6 +51,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	private static final boolean sVerboseLog = true;
 	private static final String sTag = "SettingsActivity";
 
+	private static final String sLocationInfo = "preferences_collection_location";
 	private static final String sLocationInfoGps = "preferences_collection_location_gps";
 	private static final String sLocationInfoManual = "preferences_collection_location_manual";
 
@@ -305,48 +306,50 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 		// validate some settings
 		SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-		// validate the manual location information if required
-		if(mPreferences.getBoolean(sLocationInfoManual, false)) {
-			// manual location is enabled
-
-			String mLatitude = mPreferences.getString(sManualLatitude, null);
-			String mLongitude = mPreferences.getString(sManualLongitude, null);
-
-			if(mLatitude == null || mLongitude == null) {
-				// show an error dialog
-				showDialog(sMissingCoordsDialog);
-			} else {
-				// finish as normal
-				finish();
-			}
-		} else if(mPreferences.getBoolean(sLocationInfoGps, false)) {
-			// gps location information is enabled
-
-			// output verbose debug log info
-			if(sVerboseLog) {
-				Log.v(sTag, "gps location information is enabled");
-			}
-
-			LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-			boolean mEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-			if(mEnabled == false) {
-
-				if(sVerboseLog) {
-					Log.v(sTag, "gps location service is not enabled");
-				}
-
-				showDialog(sGpsNotEnabledDialog);
-			} else {
-				// finish as normal
-				finish();
-			}
-		} else {
-
+		
+		if(mPreferences.getBoolean(sLocationInfo, false) == false) {
 			// finish as normal
 			finish();
+		} else {
+
+			// validate the manual location information if required
+			if(mPreferences.getBoolean(sLocationInfoManual, false)) {
+				// manual location is enabled
+	
+				String mLatitude = mPreferences.getString(sManualLatitude, null);
+				String mLongitude = mPreferences.getString(sManualLongitude, null);
+	
+				if(mLatitude == null || mLongitude == null) {
+					// show an error dialog
+					showDialog(sMissingCoordsDialog);
+				} else {
+					// finish as normal
+					finish();
+				}
+			} else if(mPreferences.getBoolean(sLocationInfoGps, false)) {
+				// gps location information is enabled
+	
+				// output verbose debug log info
+				if(sVerboseLog) {
+					Log.v(sTag, "gps location information is enabled");
+				}
+	
+				LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+	
+				boolean mEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+	
+				if(mEnabled == false) {
+	
+					if(sVerboseLog) {
+						Log.v(sTag, "gps location service is not enabled");
+					}
+	
+					showDialog(sGpsNotEnabledDialog);
+				} else {
+					// finish as normal
+					finish();
+				}
+			}
 		}
 	}
 
