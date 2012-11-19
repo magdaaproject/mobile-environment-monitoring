@@ -72,7 +72,7 @@ public class ItemsContentProvider extends ContentProvider {
 		// create the database if necessary
 		databaseHelper = new MainDatabaseHelper(getContext());
 
-		return false;
+		return true;
 	}
 
 	/*
